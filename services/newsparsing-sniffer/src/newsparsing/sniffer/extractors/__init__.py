@@ -4,9 +4,9 @@ class Extractor():
     NEWSPAPER_3K = 'newspaper3k'
 
 
-def extract_article(extractor, article, fields):
+def extract_fields(extractor, article, fields):
     if extractor == Extractor.NEWSPAPER_3K:
-        from newsparsing.extractors import from_newspaper3k
-        return from_newspaper3k.extract_article(article, fields) 
+        from newsparsing.sniffer.extractors import from_newspaper3k
+        from_newspaper3k.extract_fields(article, fields) 
 
     return article

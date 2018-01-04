@@ -3,22 +3,21 @@ Created on 2 janv. 2018
 
 @author: tuco
 '''
-from newspaper.article import Article
+from newspaper.article import Article as NewspaperArticle
 
 
-def extract_article(article, fields):
+def extract_fields(article, fields):
     # Download article
-    article = Article(url=article['content']['url'])
-    article.download()
+    newspaper_article = NewspaperArticle(url=article['content']['url'])
+    newspaper_article.download()
     # Parse article
-    article.parse()
+    newspaper_article.parse()
     
     extracts = {}
     if 'title' in fields:
-        extracts['title'] = article.title
+        extracts['title'] = newspaper_article.title
     if 'text' in fields:
-        extracts['text'] = article.text
+        extracts['text'] = newspaper_article.text
     if 'authors' in fields:
-        extracts['authors'] = article.authors
-    
+        extracts['authors'] = newspaper_article.authors
     return extracts
