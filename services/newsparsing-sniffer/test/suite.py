@@ -7,7 +7,7 @@ import unittest
 import sys
 from test.newsparsing.sniffer.config.application import TestConfiguration
 from test.newsparsing.sniffer.sourcers.test_access import TestSources
-from test.newsparsing.sniffer.sniffer import TestSnifferRss
+from test.newsparsing.sniffer.sniffer import TestSniffer
 
 if __name__ == '__main__':
     # Check configuration argument
@@ -24,6 +24,6 @@ if __name__ == '__main__':
     suite.addTest(TestConfiguration(configuration))
     # Tests
     suite.addTest(TestSources())
-    suite.addTest(TestSnifferRss())
+    suite.addTest(TestSniffer())
     # Run tests
-    runner.run (suite)
+    runner.run(suite)
