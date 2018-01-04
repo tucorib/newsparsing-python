@@ -8,7 +8,7 @@ from newspaper.article import Article as NewspaperArticle
 
 def extract_fields(article, fields):
     # Download article
-    newspaper_article = NewspaperArticle(url=article['content']['url'])
+    newspaper_article = NewspaperArticle(url=article.get_content('url'))
     newspaper_article.download()
     # Parse article
     newspaper_article.parse()
