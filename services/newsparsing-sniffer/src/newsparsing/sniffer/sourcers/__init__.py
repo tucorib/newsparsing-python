@@ -1,3 +1,8 @@
+import logging
+
+logger = logging.getLogger('newsparsing.sourcers')
+
+
 class SourceType():
     RSS = 'rss'
 
@@ -7,6 +12,7 @@ class Sourcer():
 
 
 def get_articles(source_type, source_name):
+    logger.debug('getting articles from %s, %s' % (source_type, source_name))
     if source_type == SourceType.RSS:
         from newsparsing.sniffer.sourcers.config.rss import get_rss_source_url, \
         get_rss_source_sourcer

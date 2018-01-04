@@ -3,12 +3,17 @@ Created on 2 janv. 2018
 
 @author: tuco
 '''
+import logging
+
 from newsparsing.sniffer.sourcers import get_articles, get_source_extractors, \
     get_source_fields, get_source_field_extractors, get_source_extractor_fields
 from newsparsing.sniffer.extractors import extract_fields
 
+logger = logging.getLogger('newsparsing.sniffer')
+
 
 def sniff(source_type, source_name):
+    logger.info('sniffing %s, %s' % (source_type, source_name))
     # Get articles from sources
     for article in get_articles(source_type, source_name):
         # Extract data
@@ -22,3 +27,4 @@ def sniff(source_type, source_name):
                     article.set_content(field, extracted_data[extractor][field])
                 
         yield article
+    logger.info('sniffed %s, %s' % (source_type, source_name))
