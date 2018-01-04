@@ -1,11 +1,12 @@
 '''
-Created on 1 janv. 2018
+Created on 4 janv. 2018
 
 @author: tuco
 '''
-from newsparsing.sourcers.config.rss import get_rss_sources
 import unittest
-from newsparsing.articles.sniffer import sniff
+from newsparsing.sniffer.sourcers.config.rss import get_rss_sources
+from newsparsing.sniffer.sniffer import sniff
+from newsparsing.sniffer.sourcers import SourceType
 
 
 class TestSnifferRss(unittest.TestCase):
@@ -15,5 +16,4 @@ class TestSnifferRss(unittest.TestCase):
         
     def test_sniff_rss_source(self):
         for rss_source in get_rss_sources():
-            sniff('rss', rss_source)
-            
+            sniff(SourceType.RSS, rss_source)
