@@ -3,7 +3,7 @@ Created on 2 janv. 2018
 
 @author: tuco
 '''
-from newsparsing.common.configuration import get_configuration
+from newsparsing.sniffer.sourcers.config.application import get_configuration
 
 SOURCE_RSS_DEFAULT = 'default'
 
