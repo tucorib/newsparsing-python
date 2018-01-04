@@ -4,10 +4,10 @@ Created on 28 dec. 2017
 @author: tuco
 '''
 import unittest
-from test.newsparsing.articles.sources import TestSources
 import sys
-from test.newsparsing.articles.sniffers.rss import TestSnifferRss
-from test.newsparsing.articles.config.application import TestConfiguration
+from test.newsparsing.sniffer.config.application import TestConfiguration
+from test.newsparsing.sniffer.sourcers.test_access import TestSources
+from test.newsparsing.sniffer.sniffer import TestSnifferRss
 
 if __name__ == '__main__':
     # Check configuration argument

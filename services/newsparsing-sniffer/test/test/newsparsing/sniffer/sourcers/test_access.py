@@ -1,12 +1,12 @@
 '''
-Created on 28 dec. 2017
+Created on 4 janv. 2018
 
 @author: tuco
 '''
 import unittest
+from newsparsing.sniffer.sourcers.config.rss import get_rss_sources, \
+    SOURCE_RSS_DEFAULT, get_rss_source_url
 import requests
-from newsparsing.sourcers.config.rss import get_rss_sources, SOURCE_RSS_DEFAULT, \
-    get_rss_source_url
 
 
 class TestSources(unittest.TestCase):
