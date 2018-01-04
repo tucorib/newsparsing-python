@@ -5,7 +5,7 @@ Created on 28 dec. 2017
 '''
 import unittest
 import os
-from newsparsing.common.configuration import load
+from newsparsing.articles.config.application import load
 
 
 class TestConfiguration(unittest.TestCase):
