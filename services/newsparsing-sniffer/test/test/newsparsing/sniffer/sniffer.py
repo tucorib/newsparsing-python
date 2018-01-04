@@ -9,11 +9,11 @@ from newsparsing.sniffer.sniffer import sniff
 from newsparsing.sniffer.sourcers import SourceType
 
 
-class TestSnifferRss(unittest.TestCase):
+class TestSniffer(unittest.TestCase):
     
     def runTest(self):
-        self.test_sniff_rss_source()
+        self.test_sniff_rss_sources()
         
-    def test_sniff_rss_source(self):
+    def test_sniff_rss_sources(self):
         for rss_source in get_rss_sources():
             sniff(SourceType.RSS, rss_source)
