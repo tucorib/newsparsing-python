@@ -1,3 +1,2 @@
-newspaper3k==0.2.5
 pymongo==3.6.0
 dictdiffer==0.7.0
