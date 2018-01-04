@@ -13,7 +13,7 @@ logger = logging.getLogger('newsparsing.sniffer')
 
 
 def sniff(source_type, source_name):
-    logger.info('sniffing %s, %s' % (source_type, source_name))
+    logger.debug('sniffing %s, %s' % (source_type, source_name))
     # Get articles from sources
     for article in get_articles(source_type, source_name):
         # Extract data
@@ -26,5 +26,5 @@ def sniff(source_type, source_name):
                 for field in extracted_data[extractor]:
                     article.set_content(field, extracted_data[extractor][field])
                 
-        yield article
+#         yield article
     logger.info('sniffed %s, %s' % (source_type, source_name))

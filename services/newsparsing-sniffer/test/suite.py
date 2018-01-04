@@ -26,4 +26,4 @@ if __name__ == '__main__':
     suite.addTest(TestSources())
     suite.addTest(TestSniffer())
     # Run tests
-    runner.run (suite)
+    runner.run(suite)
