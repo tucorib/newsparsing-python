@@ -10,15 +10,10 @@ from newsparsing.articles.config.application import get_storage_database_name, \
 from newsparsing.articles.dao import VersionnedDataBuilder
 
 
-def __get_articles_db():
+def get_articles_db():
     client = MongoClient(get_storage_database_url())
     db = client[get_storage_database_name()]
     articles_db = db['articles']
-    # Create index
-    articles_db.create_index([("_id", pymongo.ASCENDING)], unique=True)
-    articles_db.create_index([("_id", pymongo.ASCENDING),
-                              ("version", pymongo.DESCENDING)])
-    
     return articles_db
 
 
@@ -27,8 +22,14 @@ def get_article(_id, version=None):
     data_builder = VersionnedDataBuilder(_id)
     # Get versions
     versions = []
-    for _ in __get_articles_db().find(data_builder.build_dao_query(version=version)).sort([("version", pymongo.ASCENDING)]):
-        versions.append(_)
+    
+    if version is None:
+        last_version = get_articles_db().find_one(filter={'_id._id': _id}, sort=[("_id.version", pymongo.DESCENDING)])
+        if not last_version is None:
+            versions.append(last_version)
+    else:
+        for _ in get_articles_db().find({'_id._id': _id, '_id.version': {'$lte': version}}).sort([("_id.version", pymongo.ASCENDING)]):
+            versions.append(_)
     # Build article
     return data_builder.build_data_from_versions(versions)
 
@@ -48,4 +49,4 @@ def store_article(_id, content):
         # Build DAO diff
         dao_diff = data_builder.build_new_dao_version(latest_version, current_diff)
         # Store diff
-        __get_articles_db().save(dao_diff)
+        get_articles_db().save(dao_diff)
