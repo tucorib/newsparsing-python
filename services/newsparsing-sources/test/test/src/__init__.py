@@ -1,8 +1,8 @@
-from newsparsing.sniffer.sourcers.config.application import load
+from newsparsing.sourcers.config.application import load
 import os
 
 
-class SnifferTest():
+class SourcersTest():
 
     APPLICATION_CONFIGURATION = os.path.join(os.path.dirname(__file__), "../../../conf/test.application.conf")
         

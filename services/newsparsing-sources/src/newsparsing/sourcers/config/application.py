@@ -14,8 +14,8 @@ def load(configuration_path):
     global configuration
     configuration = ConfigFactory.parse_file(configuration_path)
     
-    if configuration.get('log', None):
-        logging.config.fileConfig(configuration['log'])
+    if configuration.get('logger', None):
+        logging.config.fileConfig(configuration['logger'])
 
     
 def get_configuration():
