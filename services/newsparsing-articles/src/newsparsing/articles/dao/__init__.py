@@ -7,37 +7,38 @@ from dictdiffer import patch, diff
 
 
 def get_data(collection, _id, version=None):
+    # Get versions
+    versions = []
     # Build filter
     _filter = {'_id._id': _id}
     if not version is None:
         _filter['_id.version'] = {'$lte': version}
     
-    # Get versions
-    versions = []
-    
     for _ in collection.find(_filter).sort([('_id.version', 1)]):
         versions.append(_)
     
+    # Build article
+    data = {
+        '_id': {
+            '_id': _id,
+            'version': None
+        },
+        'content': {}
+    }
+    
     if len(versions) > 0:
-        # Build article
-        data = {
-            '_id': {
-                '_id': _id,
-                'version': None
-            },
-            'content': {}
-        }
-        if len(versions) > 0:
+        # Build article if no version specified or if last version is version
+        if version is None or versions[-1]['_id']['version'] == version:
             data['_id']['version'] = versions[-1]['_id']['version']
-        # Set content
-        for version in versions:
-            patch(version['diff'], data['content'], in_place=True)
         
-        return data
-    else:
-        return None
+            # Set content
+            for version in versions:
+                patch(version['diff'], data['content'], in_place=True)
+            
+            return data
+    return None
 
-
+    
 def build_data(_id, content):
     return {
         '_id': {
