@@ -1,11 +1,12 @@
 '''
-Created on 28 dec. 2017
+Created on 5 janv. 2018
 
 @author: tuco
 '''
 import unittest
 import os
 from newsparsing.articles.config.application import load
+from pyhocon.config_parser import ConfigException
 
 
 class TestConfiguration(unittest.TestCase):
@@ -22,6 +23,8 @@ class TestConfiguration(unittest.TestCase):
         self.assertNotIn(self.configuration_filename, [None, ""], 'Configuration filename is empty')
         # Filename exists
         self.assertTrue(os.path.exists(self.configuration_filename), 'Configuration file does not exist')
-        # Load configuration
-        load(self.configuration_filename)
-        
+        try:
+            # Load configuration
+            load(self.configuration_filename)
+        except ConfigException as err:
+            self.fail(err)

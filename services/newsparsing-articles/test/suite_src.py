@@ -5,9 +5,10 @@ Created on 4 janv. 2018
 '''
 import unittest
 import sys
-from test.newsparsing.articles.config.application import TestConfiguration
-from test.newsparsing.articles.test_storage import TestStorage
-from test.newsparsing.articles.dao.articles import TestArticles
+from newsparsing.articles.config.application import load
+from test.src.configuration import TestConfiguration
+from test.src.storage import TestStorage
+from test.src.articles import TestArticles
 
 if __name__ == '__main__':
     # Check configuration argument
@@ -20,10 +21,16 @@ if __name__ == '__main__':
     # Init test suite
     runner = unittest.TextTestRunner()
     suite = unittest.TestSuite()
+    
     # Check and init configuration access
     suite.addTest(TestConfiguration(configuration))
-    # Tests
+    
+    # Load configuration
+    load(configuration)
+            
+    # Tests core
     suite.addTest(TestStorage())
     suite.addTest(TestArticles())
+    
     # Run tests
     runner.run(suite)

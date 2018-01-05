@@ -4,9 +4,8 @@ Created on 4 janv. 2018
 @author: tuco
 '''
 import unittest
-from newsparsing.articles.dao.articles import get_articles_db, store_article, \
-    get_article
-from newsparsing.articles.dao import VersionnedDataBuilder
+from newsparsing.articles.dao.articles import store_article, \
+    get_article, delete_article
 import datetime
 import time
 
@@ -28,15 +27,11 @@ class TestArticles(unittest.TestCase):
         return 'test'
     
     def __get_test_content(self):
-        return {'published': datetime.datetime.utcnow().replace(microsecond=0)}
+        return {'published': datetime.datetime.utcnow().replace(microsecond=0).timestamp()}
     
     def __clear_db(self):
-        # Get mongodb
-        self.db = get_articles_db()
-        # Get data builder
-        self.data_builder = VersionnedDataBuilder(self.__get_test_id())
         # Clear test document
-        self.db.delete_many({'_id._id': self.__get_test_id()})
+        delete_article(self.__get_test_id())
         
     def setUp(self):
         self.__clear_db()
@@ -50,10 +45,10 @@ class TestArticles(unittest.TestCase):
         content = self.__get_test_content()
         # Insert
         store_article(self.__get_test_id(), content)
-        # Get mongodb document
-        mongo_document = get_article(self.__get_test_id())
+        # Get article
+        article = get_article(self.__get_test_id())
         
-        self.assertDictEqual(mongo_document, {'_id': {'_id': self.__get_test_id(), 'version': 0}, 'content': content}, 'Test article in DB is not expected: %s' % mongo_document)
+        self.assertDictEqual(article, {'_id': {'_id': self.__get_test_id(), 'version': 0}, 'content': content}, 'Test article in DB is not expected: %s' % article)
             
     def test_same_version_save(self):
         # Document content
@@ -63,10 +58,10 @@ class TestArticles(unittest.TestCase):
         # Re-insert same document
         store_article(self.__get_test_id(), content)
         
-        # Get mongodb document
-        mongo_document = get_article(self.__get_test_id())
+        # Get article
+        article = get_article(self.__get_test_id())
         
-        self.assertEqual(mongo_document, {'_id': {'_id': self.__get_test_id(), 'version': 0}, 'content': content}, 'Test article in DB is not expected: %s' % mongo_document)
+        self.assertEqual(article, {'_id': {'_id': self.__get_test_id(), 'version': 0}, 'content': content}, 'Test article in DB is not expected: %s' % article)
 
     def test_different_version_save(self):
         # Insert
@@ -76,10 +71,10 @@ class TestArticles(unittest.TestCase):
         # Re-insert not same document
         store_article(self.__get_test_id(), self.__get_test_content())
         
-        # Get mongodb document
-        mongo_document = get_article(self.__get_test_id())
+        # Get article
+        article = get_article(self.__get_test_id())
         
-        self.assertEqual(mongo_document['_id']['version'], 1, 'Test article in DB is not expected: %s' % mongo_document)
+        self.assertEqual(article['_id']['version'], 1, 'Test article in DB is not expected: %s' % article)
             
     def test_select_old_version_query(self):
         # Document content
@@ -91,8 +86,8 @@ class TestArticles(unittest.TestCase):
         # Re-insert not same document
         store_article(self.__get_test_id(), self.__get_test_content())
         
-        # Get old mongodb document
-        mongo_document = get_article(self.__get_test_id(), version=0)
+        # Get old article
+        article = get_article(self.__get_test_id(), version=0)
         
-        self.assertEqual(mongo_document, {'_id': {'_id': self.__get_test_id(), 'version': 0}, 'content': content}, 'Test article in DB is not expected: %s' % mongo_document)
+        self.assertEqual(article, {'_id': {'_id': self.__get_test_id(), 'version': 0}, 'content': content}, 'Test article in DB is not expected: %s' % article)
             
