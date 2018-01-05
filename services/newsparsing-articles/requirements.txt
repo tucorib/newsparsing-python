@@ -1,3 +1,4 @@
 pymongo==3.6.0
 dictdiffer==0.7.0
 pyhocon==0.3.38
+Flask==0.12.2
