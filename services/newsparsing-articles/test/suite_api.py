@@ -7,7 +7,9 @@ import unittest
 import sys
 from newsparsing.articles.config.application import load
 from test.src.configuration import TestConfiguration
-from test.api import articles
+from test.api.articles.article import TestArticle
+from test.api.articles.article_id import TestArticleId
+from test.api.articles.article_id_version import TestArticleIdVersion
 
 if __name__ == '__main__':
     # Check configuration argument
@@ -30,8 +32,10 @@ if __name__ == '__main__':
     # Load configuration
     load(articles_configuration)
             
-    # Test api
-    suite.addTests(articles.suite(flask_configuration))
+    # Test articles api
+    suite.addTest(TestArticle(flask_configuration))
+    suite.addTest(TestArticleId(flask_configuration))
+    suite.addTest(TestArticleIdVersion(flask_configuration))
     
     # Run tests
     runner.run(suite)
