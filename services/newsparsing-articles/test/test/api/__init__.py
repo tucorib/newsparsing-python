@@ -6,7 +6,7 @@ import os
 
 class ApiTest(ArticlesTest):
     
-    FLASK_CONFIGURATION_FILE = os.path.join(os.path.dirname(__file__), "../../../conf/flask.conf")
+    FLASK_CONFIGURATION_FILE = os.path.join(os.path.dirname(__file__), "../../../conf/test.flask.conf")
     
     def setUp(self):
         ArticlesTest.setUp(self)

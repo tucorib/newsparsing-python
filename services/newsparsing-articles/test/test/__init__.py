@@ -4,7 +4,7 @@ import os
 
 class ArticlesTest():
 
-    APPLICATION_CONFIGURATION = os.path.join(os.path.dirname(__file__), "../../conf/application.conf")
+    APPLICATION_CONFIGURATION = os.path.join(os.path.dirname(__file__), "../../conf/test.application.conf")
         
     def setUp(self):
         # Load configuration
