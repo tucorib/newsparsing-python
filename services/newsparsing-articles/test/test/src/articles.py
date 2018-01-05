@@ -8,20 +8,10 @@ from newsparsing.articles.dao.articles import store_article, \
     get_article, delete_article
 import datetime
 import time
+from test import ArticlesTest
 
 
-class TestArticles(unittest.TestCase):
-    
-    def runTest(self):
-        self.test_save()
-        self.__clear_db()
-        self.test_query()
-        self.__clear_db()
-        self.test_same_version_save()
-        self.__clear_db()
-        self.test_different_version_save()
-        self.__clear_db()
-        self.test_select_old_version_query()
+class TestArticles(unittest.TestCase, ArticlesTest):
     
     def __get_test_id(self):
         return 'test'
@@ -29,12 +19,11 @@ class TestArticles(unittest.TestCase):
     def __get_test_content(self):
         return {'published': datetime.datetime.utcnow().replace(microsecond=0).timestamp()}
     
-    def __clear_db(self):
+    def setUp(self):
+        unittest.TestCase.setUp(self)
+        ArticlesTest.setUp(self)
         # Clear test document
         delete_article(self.__get_test_id())
-        
-    def setUp(self):
-        self.__clear_db()
 
     def test_save(self):
         # Insert

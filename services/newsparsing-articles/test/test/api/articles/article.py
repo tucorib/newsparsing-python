@@ -3,11 +3,12 @@ Created on 5 janv. 2018
 
 @author: tuco
 '''
-from test.api.articles import ArticlesFlaskTest
+from test.api import ApiTest
 import json
+import unittest
 
 
-class TestArticle(ArticlesFlaskTest):
+class TestArticle(unittest.TestCase, ApiTest):
     
     def get_api_url(self):
         return '/article'
@@ -15,9 +16,10 @@ class TestArticle(ArticlesFlaskTest):
     def get_allowed_methods(self):
         return ['POST']
     
-    def runTest(self):
-        ArticlesFlaskTest.runTest(self)
-
+    def setUp(self):
+        ApiTest.setUp(self)
+        
+    def test_post(self):
         # Empty
         response = self.client.post('/article',
                                     data=json.dumps({}),
@@ -48,3 +50,4 @@ class TestArticle(ArticlesFlaskTest):
                                         }),
                                     headers={'Content-Type': 'application/json'})
         self.assertResponseCode(response, 201)
+        
