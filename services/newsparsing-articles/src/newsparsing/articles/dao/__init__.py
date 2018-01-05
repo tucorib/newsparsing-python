@@ -5,38 +5,28 @@ Created on 4 janv. 2018
 '''
 from dictdiffer import patch, diff
 
-            
-class VersionnedDataBuilder(object):
+
+def get_data(collection, _id, version=None):
+    # Build filter
+    _filter = {'_id._id': _id}
+    if not version is None:
+        _filter['_id.version'] = {'$lte': version}
     
-    def __init__(self, _id):
-        self._id = _id
+    # Get versions
+    versions = []
     
-    @property
-    def id(self):
-        return self._id
+    for _ in collection.find(_filter).sort([('_id.version', 1)]):
+        versions.append(_)
     
-    @property
-    def dao_id(self):
-        return {'_id': {'_id': self._id}}
-        
-    def build_data_from_content(self, content, version=None):
-        return {
-            '_id': {
-                '_id': self._id,
-                'version': version
-            },
-            'content': content
-        }
-        
-    def build_data_from_versions(self, versions):
+    if len(versions) > 0:
+        # Build article
         data = {
             '_id': {
-                '_id': self._id,
+                '_id': _id,
                 'version': None
             },
             'content': {}
         }
-        # Set version
         if len(versions) > 0:
             data['_id']['version'] = versions[-1]['_id']['version']
         # Set content
@@ -44,21 +34,51 @@ class VersionnedDataBuilder(object):
             patch(version['diff'], data['content'], in_place=True)
         
         return data
+    else:
+        return None
 
-    def build_content_diff(self, old_data, new_data):
-        assert not diff(old_data['_id']['_id'], new_data['_id']['_id']) == {}, "Data don't have same ids"
-        
-        return diff(old_data['content'], new_data['content'])
+
+def build_data(_id, content):
+    return {
+        '_id': {
+            '_id': _id,
+            'version': None
+        },
+        'content': content
+    }
+
+
+def save_data(collection, last_version, data):
+    # Get data id
+    data_id = data['_id']['_id']
     
-    def build_new_dao_version(self, last_version, new_diff):
+    assert last_version is None or not diff(last_version['_id']['_id'], data_id) == {}, "Data don't have same ids"
+    
+    # Compute diff and new version
+    if last_version is None:
+        current_diff = diff({}, data['content'])
         new_version = 0
-        if not last_version['_id']['version'] is None:
-            new_version = last_version['_id']['version'] + 1 
-        return {
-            '_id': {
-                '_id': self._id,
-                'version': new_version
-            },
-            'diff': list(new_diff)
-        }
+    else:
+        current_diff = diff(last_version['content'], data['content'])
+        new_version = last_version['_id']['version'] + 1 
     
+    # Build DAO diff
+    dao_diff = {
+        '_id': {
+            '_id': data_id,
+            'version': new_version
+        },
+        'diff': list(current_diff)
+    }
+    # Store diff
+    collection.save(dao_diff)
+
+    
+def delete_data(collection, _id, version=None):
+    _filter = {'_id._id': _id}
+    if version:
+        _filter['_id.version': version]
+    
+    # Delete data
+    collection.delete_many(_filter)
+

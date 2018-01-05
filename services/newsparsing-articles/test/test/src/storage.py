@@ -33,7 +33,7 @@ class TestStorage(unittest.TestCase):
         try:
             # Connect to mongodb
             client = self.__getMongoClient()
-            
+             
             self.assertTrue(get_storage_database_name() in client.database_names(), '%s not in server %s' % (get_storage_database_name(),
                                                                                                              get_storage_database_url()))
         except ServerSelectionTimeoutError as err:
