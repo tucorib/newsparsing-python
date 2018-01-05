@@ -21,7 +21,8 @@ class Article(object):
         self.content = {}
     
     def set_content(self, name, value):
-        self.content[name] = value
+        if not value is None:
+            self.content[name] = value
     
     def get_content(self, name):
         return self.content.get(name, None)
