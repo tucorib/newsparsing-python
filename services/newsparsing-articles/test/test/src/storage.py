@@ -7,9 +7,10 @@ import unittest
 from newsparsing.articles.config.application import get_storage_database_name, get_storage_database_url
 from pymongo.errors import ServerSelectionTimeoutError
 from pymongo.mongo_client import MongoClient
+from test import ArticlesTest
 
 
-class TestStorage(unittest.TestCase):
+class TestStorage(unittest.TestCase, ArticlesTest):
     
     def runTest(self):
         self.test_storage_url()

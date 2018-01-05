@@ -41,7 +41,7 @@ def article_id(article_id):
         if article is None:
             return 'No article', 404
         else:
-            return jsonify(article)
+            return jsonify(article), 200
     
     elif request.method == 'PUT':
         data = __get_json_data(request)
@@ -64,5 +64,5 @@ def article_id_version(article_id, version):
     if article is None:
         return 'No article', 404
     else:
-        return jsonify(article)
+        return jsonify(article), 200
     
