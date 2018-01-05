@@ -26,7 +26,7 @@ def create_app(configuration_filename=None):
     flask_app.register_blueprint(article_blueprint)
     
     # Log creation
-    flask_app.logger.info('articles flask created')
+    flask_app.logger.debug('articles flask created')
     
     return flask_app
 
