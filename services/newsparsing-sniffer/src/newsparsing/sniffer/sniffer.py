@@ -43,15 +43,10 @@ def sniff(source_type, source_name):
             article_extracts[extractor] = extract_request.json()
         
         # Build content
-        content = {}
         for field in get_source_fields(source_type, source_name):
             for extractor in get_source_field_extractors(source_type, source_name, field):
-                content[field] = article_extracts[extractor][field]
+                article['content'][field] = article_extracts[extractor][field]
 
-        # Store article
-        requests.post('/article',
-                      data=json.dumps({
-                          'id': article['id'],
-                          'content': content
-                          }),
-                      headers={'Content-Type': 'application/json'})
+        # Return article
+        yield article
+        
