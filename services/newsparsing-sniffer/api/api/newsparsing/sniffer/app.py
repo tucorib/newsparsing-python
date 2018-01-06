@@ -38,12 +38,12 @@ if __name__ == '__main__':
     parser.add_argument('-c',
                         '--config',
                         dest='sniffer_configuration',
-                        default=os.path.join(os.path.dirname(__file__), "../../../../conf/test.application.conf"),
+                        default=os.path.join(os.path.dirname(__file__), "../../../../conf/application.conf"),
                         help='newsparsing-sniffer configuration file path')
     parser.add_argument('-f',
                         '--flask',
                         dest='flask_configuration',
-                        default=os.path.join(os.path.dirname(__file__), "../../../../conf/test.flask.conf"),
+                        default=os.path.join(os.path.dirname(__file__), "../../../../conf/flask.conf"),
                         help='newsparsing-sniffer flask configuration file path')
     args = parser.parse_args()
     
