@@ -21,7 +21,7 @@ def sniff(source_type, source_name):
     source_request = requests.get('%s/articles/%s/%s' % (get_service_sourcers(),
                                                          source_type,
                                                          source_name))
-    articles = source_request.json()
+    articles = source_request.json()['articles']
     
     for article in articles:
         # Get extracts
