@@ -3,15 +3,16 @@ Created on 2 janv. 2018
 
 @author: tuco
 '''
-import feedparser
+
 from newsparsing.sourcers import SourceType
 from time import mktime
 from newsparsing.sourcers.config.rss import get_rss_source_url
+import feedparser
 
 
-def get_articles(rss_source):
+def get_feedparser_articles(source_name):
     # Get rss url
-    rss_url = get_rss_source_url(rss_source)
+    rss_url = get_rss_source_url(source_name)
     # Get articles urls
     rss_parsing = feedparser.parse(rss_url)
     # Parse articles
@@ -23,7 +24,7 @@ def get_articles(rss_source):
             article = {
                 'source': {
                     'type': SourceType.RSS,
-                    'name': rss_source
+                    'name': source_name
                 },
                 'id': rss_item.get('guid', None),
                 'content': {
@@ -40,4 +41,3 @@ def get_articles(rss_source):
             if not rss_item.get('expired_parsed', None) is None:
                 article['expired'] = mktime(rss_item['expired_parsed'])
             yield article
-            

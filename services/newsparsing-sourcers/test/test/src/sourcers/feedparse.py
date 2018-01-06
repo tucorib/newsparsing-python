@@ -5,7 +5,8 @@ Created on 5 janv. 2018
 '''
 import unittest
 from test.src import SourcersTest
-from newsparsing.sourcers.feedparse import get_articles
+from newsparsing.sourcers.source import get_articles
+from newsparsing.sourcers import SourceType
 
 
 class TestRss(unittest.TestCase, SourcersTest):
@@ -17,4 +18,4 @@ class TestRss(unittest.TestCase, SourcersTest):
         SourcersTest.setUp(self)
         
     def test_get_articles(self):
-        get_articles(self.TEST_RSS)
+        get_articles(SourceType.RSS, self.TEST_RSS)
