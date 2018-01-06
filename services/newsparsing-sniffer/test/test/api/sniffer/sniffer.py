@@ -5,6 +5,7 @@ Created on 6 janv. 2018
 '''
 from test.api import ApiTest
 import unittest
+from flask import json
 
 
 class TestSniff(unittest.TestCase, ApiTest):
@@ -20,3 +21,6 @@ class TestSniff(unittest.TestCase, ApiTest):
         response = self.client.get('/sniff/%s/%s' % (self.TEST_SOURCE_TYPE,
                                                      self.TEST_SOURCE_NAME))
         self.assertResponseCode(response, 200)
+        data = json.loads(response.data)
+        self.assertIn('articles', data, "Response does not contain 'articles'")
+        
