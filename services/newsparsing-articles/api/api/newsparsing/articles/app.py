@@ -8,6 +8,7 @@ from api.newsparsing.articles.ressources.articles import article_blueprint
 from newsparsing.articles.config.application import load
 import logging.config
 import os
+import argparse
 
 
 def create_app(configuration_filename=None):
@@ -32,10 +33,24 @@ def create_app(configuration_filename=None):
 
 
 if __name__ == '__main__':
+    # Arguments
+    parser = argparse.ArgumentParser(description='Launch newsparsing-articles flask app.')
+    parser.add_argument('-c',
+                        '--config',
+                        dest='articles_configuration',
+                        default=os.path.join(os.path.dirname(__file__), "../../../../conf/test.application.conf"),
+                        help='newsparsing-articles configuration file path')
+    parser.add_argument('-f',
+                        '--flask',
+                        dest='flask_configuration',
+                        default=os.path.join(os.path.dirname(__file__), "../../../../conf/test.flask.conf"),
+                        help='newsparsing-articles flask configuration file path')
+    args = parser.parse_args()
+    
     # Get articles configuration path
-    articles_configuration = os.path.join(os.path.dirname(__file__), "../../../../conf/test.application.conf")
+    articles_configuration = args.articles_configuration
     # Get flask configuration path
-    flask_configuration = os.path.join(os.path.dirname(__file__), "../../../../conf/test.flask.conf")
+    flask_configuration = args.flask_configuration
     
     load(articles_configuration)
     create_app(flask_configuration).run()
