@@ -4,9 +4,9 @@ Created on 5 janv. 2018
 @author: tuco
 '''
 from test.api import ApiTest
-import json
 import unittest
 from newsparsing.sourcers import SourceType
+from flask import json
 
 
 class TestArticles(unittest.TestCase, ApiTest):
