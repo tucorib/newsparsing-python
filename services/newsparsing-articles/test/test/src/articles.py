@@ -27,7 +27,9 @@ class TestArticles(unittest.TestCase, ArticlesTest):
 
     def test_save(self):
         # Insert
-        store_article(self.__get_test_id(), self.__get_test_content())
+        version = store_article(self.__get_test_id(), self.__get_test_content())
+        
+        self.assertEqual(version, 0, 'Wrong version')
     
     def test_query(self):
         # Document content
@@ -45,7 +47,9 @@ class TestArticles(unittest.TestCase, ArticlesTest):
         # Insert
         store_article(self.__get_test_id(), content)
         # Re-insert same document
-        store_article(self.__get_test_id(), content)
+        version_1 = store_article(self.__get_test_id(), content)
+        
+        self.assertIsNone(version_1, 'Wrong version')
         
         # Get article
         article = get_article(self.__get_test_id())
@@ -58,7 +62,9 @@ class TestArticles(unittest.TestCase, ArticlesTest):
         # Wait for new published date
         time.sleep(1)
         # Re-insert not same document
-        store_article(self.__get_test_id(), self.__get_test_content())
+        version_1 = store_article(self.__get_test_id(), self.__get_test_content())
+        
+        self.assertEqual(version_1, 1, 'Wrong version')
         
         # Get article
         article = get_article(self.__get_test_id())
