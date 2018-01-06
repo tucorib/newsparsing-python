@@ -29,12 +29,15 @@ def article():
     if not 'content' in data:
         return 'No content specified', 403
     
-    store_article(data['id'], data['content'])
+    version = store_article(data['id'], data['content'])
     
-    return jsonify({'id': data['id']}), 201
+    if version == 0:
+        return jsonify({'id': data['id'], 'version': version}), 201
+    else:
+        return jsonify({'id': data['id'], 'version': version}), 200
 
     
-@article_blueprint.route('/article/<article_id>', methods=['GET', 'PUT', 'DELETE'])
+@article_blueprint.route('/article/<article_id>', methods=['GET', 'DELETE'])
 def article_id(article_id):
     if request.method == 'GET':
         article = get_article(article_id)
@@ -43,16 +46,6 @@ def article_id(article_id):
         else:
             return jsonify(article), 200
     
-    elif request.method == 'PUT':
-        data = __get_json_data(request)
-        
-        if not 'content' in data:
-            return 'No content specified', 403
-        
-        store_article(article_id, data['content'])
-        
-        return jsonify({'id': article_id}), 200
-
     elif request.method == 'DELETE':
         delete_article(article_id)
         return jsonify({'id': article_id}), 204

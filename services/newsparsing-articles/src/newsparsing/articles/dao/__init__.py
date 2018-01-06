@@ -73,6 +73,9 @@ def save_data(collection, last_version, data):
     }
     # Store diff
     collection.save(dao_diff)
+    
+    # Return version
+    return new_version
 
     
 def delete_data(collection, _id, version=None):

@@ -6,6 +6,7 @@ Created on 5 janv. 2018
 from test.api import ApiTest
 import json
 import unittest
+import time
 
 
 class TestArticle(unittest.TestCase, ApiTest):
@@ -51,3 +52,14 @@ class TestArticle(unittest.TestCase, ApiTest):
                                     headers={'Content-Type': 'application/json'})
         self.assertResponseCode(response, 201)
         
+        # Wait
+        time.sleep(1)
+        
+        # Update article
+        response = self.client.post('/article',
+                                    data=json.dumps({
+                                        'id': self.get_test_id(),
+                                        'content': self.get_test_content()
+                                        }),
+                                    headers={'Content-Type': 'application/json'})
+        self.assertResponseCode(response, 200)

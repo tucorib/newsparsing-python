@@ -30,8 +30,8 @@ def store_article(_id, content):
     # Check if neep to upsert
     if last_version is None or new_version['content']['published'] > last_version['content']['published']:
         # Store data
-        save_data(get_articles_db(), last_version, new_version)
-
+        return save_data(get_articles_db(), last_version, new_version)
+    
 
 def delete_article(_id):
     delete_data(get_articles_db(), _id, version=None)
