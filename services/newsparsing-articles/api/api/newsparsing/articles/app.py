@@ -6,8 +6,8 @@ Created on 5 janv. 2018
 from flask import Flask
 from api.newsparsing.articles.ressources.articles import article_blueprint
 from newsparsing.articles.config.application import load
-import sys
 import logging.config
+import os
 
 
 def create_app(configuration_filename=None):
@@ -32,15 +32,10 @@ def create_app(configuration_filename=None):
 
 
 if __name__ == '__main__':
-    # Check configuration argument
-    if len(sys.argv) < 3:
-        sys.stderr.write('Configuration argument is not passed')
-        exit(-1)
-    
     # Get articles configuration path
-    articles_configuration = sys.argv[1]
+    articles_configuration = os.path.join(os.path.dirname(__file__), "../../../../conf/test.application.conf")
     # Get flask configuration path
-    flask_configuration = sys.argv[2]
+    flask_configuration = os.path.join(os.path.dirname(__file__), "../../../../conf/test.flask.conf")
     
     load(articles_configuration)
     create_app(flask_configuration).run()

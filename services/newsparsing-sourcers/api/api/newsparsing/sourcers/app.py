@@ -6,6 +6,8 @@ Created on 5 janv. 2018
 from flask import Flask
 from api.newsparsing.sourcers.ressources.sources import source_blueprint
 import logging.config
+from newsparsing.sourcers.config.application import load
+import os
 
 
 def create_app(configuration_filename=None):
@@ -28,3 +30,12 @@ def create_app(configuration_filename=None):
     
     return flask_app
 
+
+if __name__ == '__main__':
+    # Get sourcers configuration path
+    sourcers_configuration = os.path.join(os.path.dirname(__file__), "../../../../conf/test.application.conf")
+    # Get flask configuration path
+    flask_configuration = os.path.join(os.path.dirname(__file__), "../../../../conf/test.flask.conf")
+    
+    load(sourcers_configuration)
+    create_app(flask_configuration).run()
