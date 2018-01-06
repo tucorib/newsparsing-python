@@ -44,8 +44,8 @@ def get_sources(source_type):
 
 
 def get_source_fields(source_type, source):
-    return get_configuration().get('sources.%s.%s' % (source_type, source), {}).keys()
+    return get_configuration().get('sources.%s.%s.fields' % (source_type, source), {}).keys()
 
 
 def get_source_field_extractors(source_type, source, field):
-    return get_configuration().get('sources.%s.%s.%s' % (source_type, source, field), [])
+    return get_configuration().get('sources.%s.%s.fields.%s' % (source_type, source, field), [])
