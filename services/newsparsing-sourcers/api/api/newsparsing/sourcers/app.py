@@ -8,6 +8,7 @@ from api.newsparsing.sourcers.ressources.sources import source_blueprint
 import logging.config
 from newsparsing.sourcers.config.application import load
 import os
+import argparse
 
 
 def create_app(configuration_filename=None):
@@ -32,10 +33,24 @@ def create_app(configuration_filename=None):
 
 
 if __name__ == '__main__':
+    # Arguments
+    parser = argparse.ArgumentParser(description='Launch newsparsing-sourcers flask app.')
+    parser.add_argument('-c',
+                        '--config',
+                        dest='sourcers_configuration',
+                        default=os.path.join(os.path.dirname(__file__), "../../../../conf/test.application.conf"),
+                        help='newsparsing-sourcers configuration file path')
+    parser.add_argument('-f',
+                        '--flask',
+                        dest='flask_configuration',
+                        default=os.path.join(os.path.dirname(__file__), "../../../../conf/test.flask.conf"),
+                        help='newsparsing-sourcers flask configuration file path')
+    args = parser.parse_args()
+    
     # Get sourcers configuration path
-    sourcers_configuration = os.path.join(os.path.dirname(__file__), "../../../../conf/test.application.conf")
+    sourcers_configuration = args.sourcers_configuration
     # Get flask configuration path
-    flask_configuration = os.path.join(os.path.dirname(__file__), "../../../../conf/test.flask.conf")
+    flask_configuration = args.flask_configuration
     
     load(sourcers_configuration)
     create_app(flask_configuration).run()

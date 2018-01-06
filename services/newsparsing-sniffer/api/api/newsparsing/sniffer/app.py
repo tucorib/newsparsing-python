@@ -8,6 +8,7 @@ from api.newsparsing.sniffer.ressources.sniffer import sniffer_blueprint
 import logging.config
 from newsparsing.sniffer.config.application import load
 import os
+import argparse
 
 
 def create_app(configuration_filename=None):
@@ -32,10 +33,24 @@ def create_app(configuration_filename=None):
 
 
 if __name__ == '__main__':
+    # Arguments
+    parser = argparse.ArgumentParser(description='Launch newsparsing-sniffer flask app.')
+    parser.add_argument('-c',
+                        '--config',
+                        dest='sniffer_configuration',
+                        default=os.path.join(os.path.dirname(__file__), "../../../../conf/test.application.conf"),
+                        help='newsparsing-sniffer configuration file path')
+    parser.add_argument('-f',
+                        '--flask',
+                        dest='flask_configuration',
+                        default=os.path.join(os.path.dirname(__file__), "../../../../conf/test.flask.conf"),
+                        help='newsparsing-sniffer flask configuration file path')
+    args = parser.parse_args()
+    
     # Get sniffer configuration path
-    sniffer_configuration = os.path.join(os.path.dirname(__file__), "../../../../conf/test.application.conf")
+    sniffer_configuration = args.sniffer_configuration
     # Get flask configuration path
-    flask_configuration = os.path.join(os.path.dirname(__file__), "../../../../conf/test.flask.conf")
+    flask_configuration = args.flask_configuration
     
     load(sniffer_configuration)
     create_app(flask_configuration).run()
