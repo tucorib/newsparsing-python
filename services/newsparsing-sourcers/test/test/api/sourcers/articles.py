@@ -26,7 +26,9 @@ class TestArticles(unittest.TestCase, ApiTest):
         # Get articles
         response = self.client.get('/articles/%s/%s' % (SourceType.RSS, 'lorem-rss'))
         self.assertResponseCode(response, 200)
-        for article in json.loads(response.data):
+        data = json.loads(response.data)
+        self.assertIn('articles', data, "Response does not contain 'articles'")
+        for article in data['articles']:
             self.assertDictEqual(article['source'], { 'type': SourceType.RSS, 'name': 'lorem-rss'}, 'Returned article has wrong source')
             self.assertIn('id', article, 'Article has no id')
             self.assertIn('url', article['content'], 'Article has no url')
