@@ -6,6 +6,8 @@ Created on 6 janv. 2018
 import requests
 from newsparsing.sniffer.config.application import get_source_fields, get_source_field_extractors, get_service_sourcers, get_service_extractors 
 from flask import json
+import ijson
+from _io import BytesIO
 
 
 def sniff(source_type, source_name):
@@ -21,16 +23,15 @@ def sniff(source_type, source_name):
     source_request = requests.get('%s/articles/%s/%s' % (get_service_sourcers(),
                                                          source_type,
                                                          source_name))
-    articles = source_request.json()['articles']
     
-    for article in articles:
+    for article in ijson.items(BytesIO(source_request.content), 'item'):
         # Get extracts
         article_extracts = {}
         for extractor in extractors:
             # Request data
             params = {
                 'extractor': extractor,
-                'fields': extractors[extractor]
+                'fields': list(extractors[extractor])
             }
             
             if extractor == 'newspaper3k':
