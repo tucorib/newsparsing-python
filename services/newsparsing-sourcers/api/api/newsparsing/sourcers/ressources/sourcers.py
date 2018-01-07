@@ -3,15 +3,16 @@ Created on 6 janv. 2018
 
 @author: tuco
 '''
-from flask.blueprints import Blueprint
-from newsparsing.sourcers import SourceType
-from newsparsing.sourcers.source import get_articles
-from newsparsing.sourcers.config.rss import get_rss_sources
 from flask import Response, stream_with_context, json
+from flask.blueprints import Blueprint
+
+from core.newsparsing.sourcers.core import SourceType
+from core.newsparsing.sourcers.core.config.rss import get_rss_sources
+from core.newsparsing.sourcers.core.source import get_articles
 
 source_blueprint = Blueprint('sources', __name__)
 
-        
+
 @stream_with_context
 def stream_json_array(iterator):
     try:
