@@ -4,16 +4,22 @@ Created on 2 janv. 2018
 @author: tuco
 '''
 
-from newsparsing.sourcers import SourceType
 from time import mktime
-from newsparsing.sourcers.config.rss import get_rss_source_url
+import logging
+
 import feedparser
+
+from core.newsparsing.sourcers.core import SourceType
+from core.newsparsing.sourcers.core.config.rss import get_rss_source_url
+
+logger = logging.getLogger('newsparsing.sourcers')
 
 
 def get_feedparser_articles(source_name):
     # Get rss url
     rss_url = get_rss_source_url(source_name)
     # Get articles urls
+    logger.debug('feedparser.parse %s' % rss_url)
     rss_parsing = feedparser.parse(rss_url)
     # Parse articles
     for rss_item in rss_parsing.entries:

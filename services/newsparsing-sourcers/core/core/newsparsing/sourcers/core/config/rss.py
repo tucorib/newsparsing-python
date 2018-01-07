@@ -3,9 +3,7 @@ Created on 2 janv. 2018
 
 @author: tuco
 '''
-from newsparsing.sourcers.config.application import get_configuration
-
-SOURCE_RSS_DEFAULT = 'default'
+from core.newsparsing.sourcers.core.config.application import get_configuration
 
 
 def get_rss_sources():

@@ -3,11 +3,11 @@ Created on 6 janv. 2018
 
 @author: tuco
 '''
-import feedparser
-from newsparsing.sourcers import SourceType
 from time import mktime
-from newsparsing.sourcers.config.rss import get_rss_source_sourcer
-from newsparsing.sourcers.rss.feedparser import get_feedparser_articles
+
+import feedparser
+from core.newsparsing.sourcers.core.config.rss import get_rss_source_sourcer
+from core.newsparsing.sourcers.core.rss.feedparser import get_feedparser_articles
 
 
 def get_rss_articles(source_name):
