@@ -14,6 +14,6 @@ def get_rss_articles(source_name):
     # Get sourcer
     sourcer = get_rss_source_sourcer(source_name)
     
-    if sourcer == 'feedparse':
+    if sourcer == 'feedparser':
         for article in get_feedparser_articles(source_name):
             yield article
