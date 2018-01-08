@@ -5,8 +5,8 @@ Created on 6 janv. 2018
 '''
 import logging
 
-from core.newsparsing.sourcers.core import SourceType
-from core.newsparsing.sourcers.core.rss import get_rss_articles
+from core.newsparsing.sourcers import SourceType
+from core.newsparsing.sourcers.rss import get_rss_articles
 
 logger = logging.getLogger('newsparsing.sourcers')
 

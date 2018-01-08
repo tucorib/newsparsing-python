@@ -1,0 +1,2 @@
+class SourceType():
+    RSS = 'rss'

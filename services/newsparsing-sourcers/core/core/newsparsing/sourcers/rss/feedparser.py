@@ -4,13 +4,13 @@ Created on 2 janv. 2018
 @author: tuco
 '''
 
-from time import mktime
 import logging
+from time import mktime
 
 import feedparser
 
-from core.newsparsing.sourcers.core import SourceType
-from core.newsparsing.sourcers.core.config.rss import get_rss_source_url
+from core.newsparsing.sourcers import SourceType
+from core.newsparsing.sourcers.config.rss import get_rss_source_url
 
 logger = logging.getLogger('newsparsing.sourcers')
 
@@ -25,8 +25,8 @@ def get_feedparser_articles(source_name):
     for rss_item in rss_parsing.entries:
         # Get article url
         article_url = rss_item.get('link', None)
-        
-        if not article_url is None:
+
+        if article_url is not None:
             article = {
                 'source': {
                     'type': SourceType.RSS,
@@ -37,7 +37,7 @@ def get_feedparser_articles(source_name):
                     'url': article_url
                 }
             }
-            
+
             if not rss_item.get('created_parsed', None) is None:
                 article['created'] = mktime(rss_item['created_parsed'])
             if not rss_item.get('published_parsed', None) is None:
