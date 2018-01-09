@@ -9,8 +9,9 @@ from time import mktime
 
 import feedparser
 
-from core.newsparsing.sourcers import SourceType
+from core.newsparsing.sourcers import create_article
 from core.newsparsing.sourcers.config.rss import get_rss_source_url
+from core.newsparsing.sourcers.constants.source_type import RSS
 
 logger = logging.getLogger('newsparsing.sourcers')
 
@@ -27,17 +28,11 @@ def get_feedparser_articles(source_name):
         article_url = rss_item.get('link', None)
 
         if article_url is not None:
-            article = {
-                'source': {
-                    'type': SourceType.RSS,
-                    'name': source_name
-                },
-                'id': rss_item.get('guid', None),
-                'content': {
-                    'url': article_url
-                }
-            }
+            article = create_article(RSS,
+                                     source_name,
+                                     rss_item.get('guid', None))
 
+            article['url'] = article_url
             if not rss_item.get('created_parsed', None) is None:
                 article['created'] = mktime(rss_item['created_parsed'])
             if not rss_item.get('published_parsed', None) is None:

@@ -6,9 +6,11 @@ Created on 6 janv. 2018
 from flask import Response, stream_with_context, json
 from flask.blueprints import Blueprint
 
-from core.newsparsing.sourcers import SourceType
-from core.newsparsing.sourcers.config.rss import get_rss_sources
-from core.newsparsing.sourcers.source import get_articles
+from core.newsparsing.sourcers.config.rss import get_rss_sources, \
+    get_rss_source_sourcer
+from core.newsparsing.sourcers.constants.source_type import RSS
+from core.newsparsing.sourcers.constants.sourcers import FEEDPARSER
+from core.newsparsing.sourcers.rss.feedparser import get_feedparser_articles
 
 source_blueprint = Blueprint('sources', __name__)
 
@@ -34,11 +36,15 @@ def stream_json_array(iterator):
 @source_blueprint.route('/articles/<source_type>/<source_name>',
                         methods=['GET'])
 def articles(source_type, source_name):
-    if source_type == SourceType.RSS:
+    if source_type == RSS:
         if source_name in get_rss_sources():
-            return Response(stream_json_array(get_articles(source_type,
-                                                           source_name)),
-                            mimetype="application/json")
+            sourcer = get_rss_source_sourcer(source_name)
+            if sourcer == FEEDPARSER:
+                return Response(
+                    stream_json_array(get_feedparser_articles(source_name)),
+                    mimetype="application/json")
+            else:
+                return 'Sourcer unknown', 404
         else:
             return 'Source unknown', 404
     else:

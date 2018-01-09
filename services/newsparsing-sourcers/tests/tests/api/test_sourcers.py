@@ -52,4 +52,4 @@ class ArticlesTestCase(unittest.TestCase, FlaskTestCase):
                 },
                 'Returned article has wrong source')
             self.assertIn('id', article, 'Article has no id')
-            self.assertIn('url', article['content'], 'Article has no url')
+            self.assertIn('url', article, 'Article has no url')
