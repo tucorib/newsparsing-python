@@ -29,8 +29,8 @@ if __name__ == '__main__':
                         help='newsparsing-extractors flask configuration')
     args = parser.parse_args()
 
-    # Load sourcers configuration
-    load_configuration(args.sourcers_configuration)
+    # Load extractors configuration
+    load_configuration(args.extractors_configuration)
     # Create flask API
     flask_app = create_flask_app()
     # Load configuration
