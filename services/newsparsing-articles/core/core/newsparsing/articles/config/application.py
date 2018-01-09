@@ -3,19 +3,24 @@ Created on 1 janv. 2018
 
 @author: tuco
 '''
-from pyhocon.config_parser import ConfigFactory
 import logging.config
+
+from pyhocon.config_parser import ConfigFactory
 
 # Configuration
 configuration = None
 
+logger = logging.getLogger('newsparsing.articles')
 
-def load(configuration_path):
+
+def load_configuration(configuration_path):
     global configuration
     configuration = ConfigFactory.parse_file(configuration_path)
-    
+
     if configuration.get('logger', None):
         logging.config.fileConfig(configuration['logger'])
+
+    logger.debug('Configuration: %s' % configuration_path)
 
 
 def get_configuration():

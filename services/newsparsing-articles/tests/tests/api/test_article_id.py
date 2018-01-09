@@ -3,25 +3,34 @@ Created on 5 janv. 2018
 
 @author: tuco
 '''
-from test.api import ApiTest
-from flask import json
+import datetime
 import unittest
 
+from flask import json
 
-class TestArticleId(unittest.TestCase, ApiTest):
-    
+from tests.api import ArticleTestCase
+
+
+class TestArticleId(unittest.TestCase, ArticleTestCase):
+
     def get_api_url(self):
         return '/article/%s' % self.get_test_id()
-    
+
     def get_allowed_methods(self):
         return ['GET', 'DELETE']
 
+    def get_test_id(self):
+        return 'test'
+
+    def get_test_content(self):
+        return {'published': datetime.datetime.utcnow().replace(microsecond=0).timestamp()}
+
     def setUp(self):
-        ApiTest.setUp(self)        
-        
+        ArticleTestCase.setUp(self)
+
         # Build content
         self.test_content = self.get_test_content()
-        
+
         # Insert article
         self.client.post('/article',
                          data=json.dumps({
@@ -29,12 +38,12 @@ class TestArticleId(unittest.TestCase, ApiTest):
                              'content': self.test_content
                              }),
                          headers={'Content-Type': 'application/json'})
-        
+
     def test_get(self):
         # Unexisting id
         response = self.client.get('/article/%s' % 'error')
         self.assertResponseCode(response, 404)
-        
+
         # Get article
         response = self.client.get('/article/%s' % self.get_test_id())
         self.assertResponseCode(response, 200)
@@ -49,4 +58,4 @@ class TestArticleId(unittest.TestCase, ApiTest):
                                           }),
                                       headers={'Content-Type': 'application/json'})
         self.assertResponseCode(response, 204)
-        
+

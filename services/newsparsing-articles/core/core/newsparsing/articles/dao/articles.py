@@ -4,9 +4,9 @@ Created on 2 janv. 2018
 @author: tuco
 '''
 from pymongo.mongo_client import MongoClient
-from newsparsing.articles.config.application import get_storage_database_name, \
+from core.newsparsing.articles.config.application import get_storage_database_name, \
     get_storage_database_url
-from newsparsing.articles.dao import  \
+from core.newsparsing.articles.dao import  \
     build_data, get_data, save_data, delete_data
 
 
@@ -26,13 +26,12 @@ def store_article(_id, content):
     last_version = get_article(_id)
     # Build new version
     new_version = build_data(_id, content)
-    
+
     # Check if neep to upsert
     if last_version is None or new_version['content']['published'] > last_version['content']['published']:
         # Store data
         return save_data(get_articles_db(), last_version, new_version)
-    
+
 
 def delete_article(_id):
     delete_data(get_articles_db(), _id, version=None)
-    
