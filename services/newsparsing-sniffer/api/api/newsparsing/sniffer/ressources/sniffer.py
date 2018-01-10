@@ -31,9 +31,9 @@ def stream_json_array(iterator):
     yield '%s]' % json.dumps(prev)
 
 
-@sniffer_blueprint.route('/sniff/<source_type>/<source_name>',
+@sniffer_blueprint.route('/sniff/<source>',
                          methods=['GET'])
-def sniff(source_type, source_name):
+def sniff(source):
     return Response(
-                    stream_json_array(core_sniff(source_type, source_name)),
+                    stream_json_array(core_sniff(source)),
                     mimetype="application/json")

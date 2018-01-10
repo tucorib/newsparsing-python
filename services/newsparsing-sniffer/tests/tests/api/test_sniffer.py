@@ -14,8 +14,7 @@ from tests.api import FlaskTestCase
 
 class ApiSnifferTestCase(unittest.TestCase, FlaskTestCase):
 
-    TEST_SOURCE_TYPE = "rss"
-    TEST_SOURCE_NAME = "slate"
+    TEST_SOURCE = "slate"
 
     def setUp(self):
         unittest.TestCase.setUp(self)
@@ -27,19 +26,11 @@ class ApiSnifferTestCase(unittest.TestCase, FlaskTestCase):
 
     def test_get(self):
         # Empty extractor
-        response = self.client.get('/sniff/%s/%s' % (self.TEST_SOURCE_TYPE,
-                                                     self.TEST_SOURCE_NAME))
+        response = self.client.get('/sniff/%s' % self.TEST_SOURCE)
         self.assertResponseCode(response, 200)
 
         for article in ijson.items(BytesIO(response.data), 'item'):
-            self.assertEqual(
-                article['source'],
-                {
-                    'type': self.TEST_SOURCE_TYPE,
-                    'name': self.TEST_SOURCE_NAME
-                },
-                'Returned article has wrong source')
+            self.assertEqual(article['source'], self.TEST_SOURCE, 'Returned article has wrong source')
             self.assertIn('id', article, 'Article has no id')
-            self.assertIn('url', article, 'Article has no url')
-            for field in get_source_fields(self.TEST_SOURCE_TYPE, self.TEST_SOURCE_NAME):
-                self.assertIn(field, article, 'Missing firld %s in article' % field)
+            for field in get_source_fields(self.TEST_SOURCE):
+                self.assertIn(field, article, 'Missing field %s in article' % field)

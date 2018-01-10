@@ -40,14 +40,12 @@ class ArticlesSnifferActor(pykka.ThreadingActor):
         self.iterator = ArticlesIterator()
 
         # Get params
-        self.source_type = message['type']
-        self.source_name = message['name']
+        source = message['source']
 
         # Ask for sourcer articles
         sourcer_actor = ArticlesSourcerActor.start()
         articles = []
-        for article in sourcer_actor.ask({'type': self.source_type,
-                                          'name': self.source_name}):
+        for article in sourcer_actor.ask({'source': source}):
             articles.append(article)
             # Register article to iterator
             self.iterator.register(article)

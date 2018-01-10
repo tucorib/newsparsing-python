@@ -18,14 +18,12 @@ logger = logging.getLogger('newsparsing.sniffer')
 class ArticlesSourcerActor(pykka.ThreadingActor):
 
     def on_receive(self, message):
-        source_type = message['type']
-        source_name = message['name']
+        source = message['source']
 
         # Get articles from source
-        logger.debug('Source articles from %s' % source_name)
-        source_request = requests.get('%s/articles/%s/%s' % (get_service_sourcers(),
-                                                             source_type,
-                                                             source_name))
+        logger.debug('Source articles from %s' % source)
+        source_request = requests.get('%s/articles/%s' % (get_service_sourcers(),
+                                                          source))
         # Return articles
         for article in ijson.items(BytesIO(source_request.content), 'item'):
             yield article

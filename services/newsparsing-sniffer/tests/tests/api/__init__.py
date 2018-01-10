@@ -9,7 +9,7 @@ from tests.core import CoreSnifferTestCase
 
 class FlaskTestCase(CoreSnifferTestCase):
 
-    FLASK_CONFIGURATION_FILE = os.path.join(CONFIG_DIR, "test.flask.conf")
+    FLASK_CONFIGURATION_FILE = os.path.join(CONFIG_DIR, "tests.flask.conf")
 
     def setUp(self):
         CoreSnifferTestCase.setUp(self)

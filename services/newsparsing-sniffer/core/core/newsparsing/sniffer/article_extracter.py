@@ -25,16 +25,14 @@ class ArticleExtracterActor(pykka.ThreadingActor):
     def on_receive(self, message):
         article = message['article']
 
-        source_type = article['source']['type']
-        source_name = article['source']['name']
+        source = article['source']
 
         # Get fields to extract
-        fields = get_source_fields(source_type, source_name)
+        fields = get_source_fields(source)
         # Get extractors for source
         extractors = set()
         for field in fields:
-            extractors = extractors.union(get_source_field_extractors(source_type,
-                                                                      source_name,
+            extractors = extractors.union(get_source_field_extractors(source,
                                                                       field))
         # Get extracts
         extracts = {}
@@ -56,7 +54,7 @@ class ArticleExtracterActor(pykka.ThreadingActor):
 
         # Build content
         for field in fields:
-            for extractor in get_source_field_extractors(source_type, source_name, field):
+            for extractor in get_source_field_extractors(source, field):
                 article[field] = extracts[extractor][field]
 
         # Put extracts in queue
