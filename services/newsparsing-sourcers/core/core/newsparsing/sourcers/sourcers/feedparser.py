@@ -4,14 +4,13 @@ Created on 2 janv. 2018
 @author: tuco
 '''
 
-import logging
 from time import mktime
+import logging
 
 import feedparser
 
 from core.newsparsing.sourcers import create_article
 from core.newsparsing.sourcers.config.rss import get_rss_source_url
-from core.newsparsing.sourcers.constants.source_type import RSS
 
 logger = logging.getLogger('newsparsing.sourcers')
 
@@ -28,8 +27,7 @@ def get_feedparser_articles(source_name):
         article_url = rss_item.get('link', None)
 
         if article_url is not None:
-            article = create_article(RSS,
-                                     source_name,
+            article = create_article(source_name,
                                      rss_item.get('guid', None))
 
             article['url'] = article_url

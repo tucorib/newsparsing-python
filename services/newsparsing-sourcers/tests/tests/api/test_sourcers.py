@@ -24,32 +24,18 @@ class ArticlesTestCase(unittest.TestCase, FlaskTestCase):
         return ijson.items(BytesIO(response.data), 'item')
 
     def test_404(self):
-        # Unexisting source type
-        response = self.client.get('/articles/%s/%s' % ('error',
-                                                        'slate'),
-                                   headers=self.get_api_headers())
-        self.assertResponseCode(response, 404)
-
         # Unexisting source name
-        response = self.client.get('/articles/%s/%s' % ('rss',
-                                                        'error'),
+        response = self.client.get('/articles/%s' % 'error',
                                    headers=self.get_api_headers())
         self.assertResponseCode(response, 404)
 
     def test_get_rss(self):
         # Get articles
-        response = self.client.get('/articles/%s/%s' % ('rss',
-                                                        'slate'),
+        response = self.client.get('/articles/%s' % 'slate',
                                    headers=self.get_api_headers())
         self.assertResponseCode(response, 200)
 
         for article in self.__get_articles(response):
-            self.assertDictEqual(
-                article['source'],
-                {
-                    'type': 'rss',
-                    'name': 'slate'
-                },
-                'Returned article has wrong source')
+            self.assertEqual(article['source'], 'slate', 'Returned article has wrong source')
             self.assertIn('id', article, 'Article has no id')
             self.assertIn('url', article, 'Article has no url')
