@@ -10,7 +10,7 @@ from pyhocon.config_parser import ConfigFactory
 # Configuration
 configuration = None
 
-logger = logging.getLogger('newsparsing.sourcers')
+logger = logging.getLogger('newsparsing.extractors')
 
 
 def load_configuration(configuration_path):
