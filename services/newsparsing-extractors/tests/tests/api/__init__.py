@@ -9,7 +9,7 @@ from tests.core import ExtractorsTestCase
 
 class FlaskTestCase(ExtractorsTestCase):
 
-    FLASK_CONFIGURATION_FILE = os.path.join(CONFIG_DIR, "test.flask.conf")
+    FLASK_CONFIGURATION_FILE = os.path.join(CONFIG_DIR, "tests.flask.conf")
 
     def setUp(self):
         ExtractorsTestCase.setUp(self)
