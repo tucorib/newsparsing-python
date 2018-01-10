@@ -30,7 +30,7 @@ def stream_json_array(iterator):
     yield '%s]' % json.dumps(prev)
 
 
-@source_blueprint.route('/articles/<source>',
+@source_blueprint.route('/<source>/articles',
                         methods=['GET'])
 def articles(source):
     if source in get_sources():

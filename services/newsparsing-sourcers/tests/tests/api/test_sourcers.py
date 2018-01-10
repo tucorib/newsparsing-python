@@ -25,13 +25,13 @@ class ArticlesTestCase(unittest.TestCase, FlaskTestCase):
 
     def test_404(self):
         # Unexisting source name
-        response = self.client.get('/articles/%s' % 'error',
+        response = self.client.get('/source/%s/articles' % 'error',
                                    headers=self.get_api_headers())
         self.assertResponseCode(response, 404)
 
     def test_get_rss(self):
         # Get articles
-        response = self.client.get('/articles/%s' % 'slate',
+        response = self.client.get('/source/%s/articles' % 'slate',
                                    headers=self.get_api_headers())
         self.assertResponseCode(response, 200)
 

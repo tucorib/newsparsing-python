@@ -12,7 +12,7 @@ def create_flask_app():
     # Flask app
     flask_app = Flask(__name__)
     # Flask app blueprints
-    flask_app.register_blueprint(source_blueprint)
+    flask_app.register_blueprint(source_blueprint, url_prefix='/source')
 
     return flask_app
 
