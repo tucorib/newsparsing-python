@@ -3,9 +3,12 @@ Created on 6 janv. 2018
 
 @author: tuco
 '''
+from flask import json
 from flask.blueprints import Blueprint
-from newsparsing.sniffer.sniffer import sniff as sniff_src
-from flask import Response, stream_with_context, json
+from flask.helpers import stream_with_context
+from flask.wrappers import Response
+
+from core.newsparsing.sniffer.sniffer import sniff as core_sniff
 
 sniffer_blueprint = Blueprint('sniffer', __name__)
 
@@ -18,7 +21,7 @@ def stream_json_array(iterator):
         # Empty iterator, return now
         yield '[]'
         raise StopIteration
-    
+
     yield '['
     # Iterate
     for _ in iterator:
@@ -27,7 +30,10 @@ def stream_json_array(iterator):
     # Now yield the last iteration without comma but with the closing brackets
     yield '%s]' % json.dumps(prev)
 
-    
-@sniffer_blueprint.route('/sniff/<source_type>/<source_name>', methods=['GET'])
-def sniff(source_type, source_name):
-    return Response(stream_json_array(sniff_src(source_type, source_name)), mimetype="application/json")
+
+@sniffer_blueprint.route('/<source>',
+                         methods=['GET'])
+def sniff(source):
+    return Response(
+                    stream_json_array(core_sniff(source)),
+                    mimetype="application/json")

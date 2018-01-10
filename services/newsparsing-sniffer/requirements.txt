@@ -3,3 +3,5 @@ Flask==0.12.2
 Flask-Jsonpify==1.5.0
 requests==2.18.4
 ijson==2.3
+pykka==1.2.1
+aiounittest==1.1.0
