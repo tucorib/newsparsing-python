@@ -12,3 +12,6 @@ def sniff(source_type, source_name):
     for article in articles_sniffer.ask({'type': source_type,
                                          'name': source_name}):
         yield article
+    
+    # Stop actor
+    articles_sniffer.stop()

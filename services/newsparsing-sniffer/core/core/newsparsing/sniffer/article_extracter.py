@@ -3,9 +3,9 @@ Created on 9 janv. 2018
 
 @author: nribeiro
 '''
+import json
 import logging
 
-from flask import json
 import pykka
 import requests
 
@@ -36,7 +36,6 @@ class ArticleExtracterActor(pykka.ThreadingActor):
             extractors = extractors.union(get_source_field_extractors(source_type,
                                                                       source_name,
                                                                       field))
-
         # Get extracts
         extracts = {}
         for extractor in extractors:
@@ -58,10 +57,11 @@ class ArticleExtracterActor(pykka.ThreadingActor):
         # Build content
         for field in fields:
             for extractor in get_source_field_extractors(source_type, source_name, field):
-                article['content'][field] = extracts[extractor][field]
+                article[field] = extracts[extractor][field]
 
+        # Put extracts in queue
         self.queue.put(article)
 
     def __build_params(self, article, extractor, params):
         if extractor == NEWSPAPER3K:
-            params['url'] = article['content']['url']
+            params['url'] = article['url']

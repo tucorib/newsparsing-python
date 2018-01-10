@@ -26,6 +26,6 @@ class ArticlesSourcerActor(pykka.ThreadingActor):
         source_request = requests.get('%s/articles/%s/%s' % (get_service_sourcers(),
                                                              source_type,
                                                              source_name))
-        # Call extractors
+        # Return articles
         for article in ijson.items(BytesIO(source_request.content), 'item'):
             yield article

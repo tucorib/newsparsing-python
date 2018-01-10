@@ -3,11 +3,8 @@ Created on 9 janv. 2018
 
 @author: nribeiro
 '''
-import logging
 from queue import Queue
-
 import pykka
-
 from core.newsparsing.sniffer.article_extracter import ArticleExtracterActor
 from core.newsparsing.sniffer.articles_sourcer import ArticlesSourcerActor
 
@@ -48,15 +45,29 @@ class ArticlesSnifferActor(pykka.ThreadingActor):
 
         # Ask for sourcer articles
         sourcer_actor = ArticlesSourcerActor.start()
+        articles = []
         for article in sourcer_actor.ask({'type': self.source_type,
                                           'name': self.source_name}):
+            articles.append(article)
             # Register article to iterator
             self.iterator.register(article)
-            # Extract data for each article
+        
+        # Stop sourcer_actor
+        sourcer_actor.stop()
+        
+        # Extract data for each article
+        extracter_actors = set()
+        for article in articles:
             extracter_actor = ArticleExtracterActor.start(self.iterator)
+            extracter_actors.add(extracter_actor)
             extracter_actor.ask({'article': article},
                                 block=False)
 
-        # Yield iterator data
+        # Return articles
         for article in self.iterator:
             yield article
+        
+        # Stop extracter_actors
+        for actor in extracter_actors:
+            actor.stop()
+        

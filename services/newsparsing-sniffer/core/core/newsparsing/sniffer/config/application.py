@@ -41,15 +41,15 @@ def get_service_articles():
 
 
 def get_sourcetypes():
-    return get_configuration().get('sources', {}).keys()
+    return list(get_configuration().get('sources', {}).keys())
 
 
 def get_sources(source_type):
-    return get_configuration().get('sources.%s' % source_type, {}).keys()
+    return list(get_configuration().get('sources.%s' % source_type, {}).keys())
 
 
 def get_source_fields(source_type, source):
-    return get_configuration().get('sources.%s.%s.fields' % (source_type, source), {}).keys()
+    return list(get_configuration().get('sources.%s.%s.fields' % (source_type, source), {}).keys())
 
 
 def get_source_field_extractors(source_type, source, field):
