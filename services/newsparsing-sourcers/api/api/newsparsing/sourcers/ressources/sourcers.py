@@ -9,7 +9,7 @@ from flask.blueprints import Blueprint
 from core.newsparsing.sourcers.config.application import get_sources
 from core.newsparsing.sourcers.sourcer import get_articles
 
-source_blueprint = Blueprint('sources', __name__)
+source_blueprint = Blueprint('source', __name__)
 
 
 @stream_with_context
@@ -18,7 +18,7 @@ def stream_json_array(iterator):
         prev = next(iterator)  # Get first result
     except StopIteration:
         # Empty iterator, return now
-        yield '[]}'
+        yield '[]'
         raise StopIteration
 
     yield '['
