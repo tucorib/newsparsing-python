@@ -14,7 +14,7 @@ def create_flask_app():
     # Flask app
     flask_app = Flask(__name__)
     # Flask app blueprints
-    flask_app.register_blueprint(extractor_blueprint)
+    flask_app.register_blueprint(extractor_blueprint, url_prefix='/extractor')
 
     return flask_app
 

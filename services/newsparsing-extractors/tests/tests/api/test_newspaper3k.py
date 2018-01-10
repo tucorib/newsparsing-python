@@ -15,7 +15,8 @@ from tests.api import FlaskTestCase
 class Newspaper3kTestCase(unittest.TestCase, FlaskTestCase):
 
     TEST_URL = "http://edition.cnn.com/2013/11/27/justice/tucson-arizona-captive-girls/"
-
+    TEST_EXTRACTOR = NEWSPAPER3K
+    
     def setUp(self):
         unittest.TestCase.setUp(self)
         FlaskTestCase.setUp(self)
@@ -25,37 +26,33 @@ class Newspaper3kTestCase(unittest.TestCase, FlaskTestCase):
         FlaskTestCase.tearDown(self)
 
     def test_post(self):
-        # Empty extractor
-        response = self.client.post('/extract',
+        # Wrong extractor
+        response = self.client.post('/extractor/error/extract',
                                     data=json.dumps({
-                                        'fields': get_extractors_fields(NEWSPAPER3K),
+                                        'fields': get_extractors_fields(self.TEST_EXTRACTOR),
                                     }),
                                     headers=self.get_api_headers())
         self.assertResponseCode(response, 403)
 
         # Empty fields
-        response = self.client.post('/extract',
-                                    data=json.dumps({
-                                        'extractor': NEWSPAPER3K,
-                                    }),
+        response = self.client.post('/extractor/%s/extract' % self.TEST_EXTRACTOR,
+                                    data=json.dumps({}),
                                     headers=self.get_api_headers())
         self.assertResponseCode(response, 403)
 
     def test_newspaper3k(self):
         # Empty url
-        response = self.client.post('/extract',
+        response = self.client.post('/extractor/%s/extract' % self.TEST_EXTRACTOR,
                                     data=json.dumps({
-                                        'extractor': NEWSPAPER3K,
-                                        'fields': get_extractors_fields(NEWSPAPER3K)
+                                        'fields': get_extractors_fields(self.TEST_EXTRACTOR)
                                     }),
                                     headers=self.get_api_headers())
         self.assertResponseCode(response, 403)
 
         # Test extract
-        response = self.client.post('/extract',
+        response = self.client.post('/extractor/%s/extract' % self.TEST_EXTRACTOR,
                                     data=json.dumps({
-                                        'extractor': NEWSPAPER3K,
-                                        'fields': get_extractors_fields(NEWSPAPER3K),
+                                        'fields': get_extractors_fields(self.TEST_EXTRACTOR),
                                         'url': self.TEST_URL
                                     }),
                                     headers=self.get_api_headers())

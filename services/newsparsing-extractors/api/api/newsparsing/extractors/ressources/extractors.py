@@ -10,7 +10,7 @@ from flask.json import jsonify
 from core.newsparsing.extractors.constants.extractors import NEWSPAPER3K
 from core.newsparsing.extractors.newspaper3k import extract_fields
 
-extractor_blueprint = Blueprint('sources', __name__)
+extractor_blueprint = Blueprint('extractor', __name__)
 
 
 def __get_json_data(request):
@@ -22,16 +22,13 @@ def __get_json_data(request):
         return 'Content-Type must be application/json', 400
 
 
-@extractor_blueprint.route('/extract', methods=['POST'])
-def extract():
+@extractor_blueprint.route('/<extractor>/extract', methods=['POST'])
+def extract(extractor):
     data = __get_json_data(request)
 
-    if not 'extractor' in data:
-        return 'No extractor specified', 403
     if not 'fields' in data:
         return 'No field specified', 403
 
-    extractor = data['extractor']
     fields = data['fields']
 
     if extractor == NEWSPAPER3K:
