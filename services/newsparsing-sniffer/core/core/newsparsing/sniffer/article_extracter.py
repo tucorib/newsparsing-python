@@ -39,7 +39,6 @@ class ArticleExtracterActor(pykka.ThreadingActor):
         for extractor in extractors:
             # Request data
             params = {
-                'extractor': extractor,
                 'fields': fields
             }
 
@@ -47,7 +46,8 @@ class ArticleExtracterActor(pykka.ThreadingActor):
 
             # Request
             logger.debug('Extract article %s' % article['id'])
-            extract_request = requests.post('%s/extract' % get_service_extractors(),
+            extract_request = requests.post('%s/extractor/%s/extract' % (get_service_extractors(),
+                                                                         extractor),
                                             data=json.dumps(params),
                                             headers={'Content-Type': 'application/json'})
             extracts[extractor] = extract_request.json()
