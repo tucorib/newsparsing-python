@@ -7,7 +7,7 @@ from tests import CONFIG_DIR
 class ArticlesTestCase():
 
     APPLICATION_CONFIGURATION = os.path.join(CONFIG_DIR,
-                                             "test.application.conf")
+                                             "tests.application.conf")
 
     def setUp(self):
         # Load configuration
