@@ -10,7 +10,7 @@ from flask_jsonpify import jsonify
 from core.newsparsing.articles.dao.articles import get_article, store_article, \
     delete_article
 
-article_blueprint = Blueprint('articles', __name__)
+article_blueprint = Blueprint('article', __name__)
 
 
 def __get_json_data(request):
@@ -22,7 +22,7 @@ def __get_json_data(request):
         return 'Content-Type must be application/json', 400
 
 
-@article_blueprint.route('/article',
+@article_blueprint.route('',
                          methods=['POST'])
 def article():
     data = __get_json_data(request)
@@ -40,7 +40,7 @@ def article():
         return jsonify({'id': data['id'], 'version': version}), 200
 
 
-@article_blueprint.route('/article/<article_id>',
+@article_blueprint.route('/<article_id>',
                          methods=['GET', 'DELETE'])
 def article_id(article_id):
     if request.method == 'GET':
@@ -55,7 +55,7 @@ def article_id(article_id):
         return jsonify({'id': article_id}), 204
 
 
-@article_blueprint.route('/article/<article_id>/<int:version>',
+@article_blueprint.route('/<article_id>/<int:version>',
                          methods=['GET'])
 def article_id_version(article_id, version):
     article = get_article(article_id, version)
