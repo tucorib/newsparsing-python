@@ -30,7 +30,6 @@ class ApiSnifferTestCase(unittest.TestCase, FlaskTestCase):
         self.assertResponseCode(response, 200)
 
         for article in ijson.items(BytesIO(response.data), 'item'):
-            self.assertEqual(article['source'], self.TEST_SOURCE, 'Returned article has wrong source')
             self.assertIn('id', article, 'Article has no id')
             for field in get_source_fields(self.TEST_SOURCE):
-                self.assertIn(field, article, 'Missing field %s in article' % field)
+                self.assertIn(field, article['content'], 'Missing field %s in article' % field)

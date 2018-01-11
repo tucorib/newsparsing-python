@@ -49,10 +49,10 @@ class ArticlesSnifferActor(pykka.ThreadingActor):
             articles.append(article)
             # Register article to iterator
             self.iterator.register(article)
-        
+
         # Stop sourcer_actor
         sourcer_actor.stop()
-        
+
         # Extract data for each article
         extracter_actors = set()
         for article in articles:
@@ -61,11 +61,10 @@ class ArticlesSnifferActor(pykka.ThreadingActor):
             extracter_actor.ask({'article': article},
                                 block=False)
 
-        # Return articles
+        # Return contents
         for article in self.iterator:
             yield article
-        
+
         # Stop extracter_actors
         for actor in extracter_actors:
             actor.stop()
-        

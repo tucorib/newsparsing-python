@@ -38,6 +38,8 @@ class Newspaper3kActor(pykka.ThreadingActor):
         extracts = {}
         for field in fields:
             if field in get_extractors_fields(NEWSPAPER3K):
+                if field == 'url':
+                    extracts['url'] = url
                 if field == 'title':
                     extracts['title'] = newspaper_article.title
                 if field == 'text':

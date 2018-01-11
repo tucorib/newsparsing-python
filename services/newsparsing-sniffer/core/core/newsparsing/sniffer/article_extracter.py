@@ -53,12 +53,13 @@ class ArticleExtracterActor(pykka.ThreadingActor):
             extracts[extractor] = extract_request.json()
 
         # Build content
+        content = {}
         for field in fields:
             for extractor in get_source_field_extractors(source, field):
-                article[field] = extracts[extractor][field]
+                content[field] = extracts[extractor][field]
 
         # Put extracts in queue
-        self.queue.put(article)
+        self.queue.put({'id': article['id'], 'content': content})
 
     def __build_params(self, article, extractor, params):
         if extractor == NEWSPAPER3K:
