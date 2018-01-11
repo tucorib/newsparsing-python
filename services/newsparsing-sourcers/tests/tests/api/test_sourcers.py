@@ -12,6 +12,8 @@ from tests.api import FlaskTestCase
 
 class ArticlesTestCase(unittest.TestCase, FlaskTestCase):
 
+    TEST_SOURCE = 'slate'
+
     def setUp(self):
         unittest.TestCase.setUp(self)
         FlaskTestCase.setUp(self)
@@ -31,11 +33,11 @@ class ArticlesTestCase(unittest.TestCase, FlaskTestCase):
 
     def test_get_rss(self):
         # Get articles
-        response = self.client.get('/source/%s/articles' % 'slate',
+        response = self.client.get('/source/%s/articles' % self.TEST_SOURCE,
                                    headers=self.get_api_headers())
         self.assertResponseCode(response, 200)
 
         for article in self.__get_articles(response):
-            self.assertEqual(article['source'], 'slate', 'Returned article has wrong source')
+            self.assertEqual(article['source'], self.TEST_SOURCE, 'Returned article has wrong source')
             self.assertIn('id', article, 'Article has no id')
             self.assertIn('url', article, 'Article has no url')

@@ -6,8 +6,8 @@ Created on 6 janv. 2018
 from flask import Response, stream_with_context, json
 from flask.blueprints import Blueprint
 
+from core.newsparsing.sourcers.articles import ArticlesActor
 from core.newsparsing.sourcers.config.application import get_sources
-from core.newsparsing.sourcers.sourcer import get_articles
 
 source_blueprint = Blueprint('source', __name__)
 
@@ -34,8 +34,14 @@ def stream_json_array(iterator):
                         methods=['GET'])
 def articles(source):
     if source in get_sources():
+        # Start actor
+        articles_actor = ArticlesActor.start()
+        articles_iterator = articles_actor.ask({'source': source})
+        # Stop actor
+        articles_actor.stop()
+
         return Response(
-                    stream_json_array(get_articles(source)),
+                    stream_json_array(articles_iterator),
                     mimetype="application/json")
     else:
         return 'Source unknown', 404

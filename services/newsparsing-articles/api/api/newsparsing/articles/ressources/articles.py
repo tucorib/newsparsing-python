@@ -7,8 +7,9 @@ from flask.blueprints import Blueprint
 from flask.globals import request
 from flask_jsonpify import jsonify
 
-from core.newsparsing.articles.dao.articles import get_article, store_article, \
-    delete_article
+from core.newsparsing.articles.dao.article_deleter import ArticleDeleterActor
+from core.newsparsing.articles.dao.article_getter import ArticleGetterActor
+from core.newsparsing.articles.dao.article_storer import ArticleStorerActor
 
 article_blueprint = Blueprint('article', __name__)
 
@@ -32,7 +33,13 @@ def article():
     if not 'content' in data:
         return 'No content specified', 403
 
-    version = store_article(data['id'], data['content'])
+    # Start actor
+    article_storer_actor = ArticleStorerActor.start()
+    version = article_storer_actor.ask({'id': data['id'],
+                                        'content': data['content']
+                                        })
+    # Stop actor
+    article_storer_actor.stop()
 
     if version == 0:
         return jsonify({'id': data['id'], 'version': version}), 201
@@ -44,21 +51,38 @@ def article():
                          methods=['GET', 'DELETE'])
 def article_id(article_id):
     if request.method == 'GET':
-        article = get_article(article_id)
+        # Start actor
+        article_getter_actor = ArticleGetterActor.start()
+        article = article_getter_actor.ask({'id': article_id})
+        # Stop actor
+        article_getter_actor.stop()
+
         if article is None:
             return 'No article', 404
         else:
             return jsonify(article), 200
 
     elif request.method == 'DELETE':
-        delete_article(article_id)
+        # Start actor
+        article_deleter_actor = ArticleDeleterActor.start()
+        article_deleter_actor.ask({'id': article_id},
+                                  block=False)
+        # Stop actor
+        article_deleter_actor.stop()
+
         return jsonify({'id': article_id}), 204
 
 
 @article_blueprint.route('/<article_id>/<int:version>',
                          methods=['GET'])
 def article_id_version(article_id, version):
-    article = get_article(article_id, version)
+    # Start actor
+    article_getter_actor = ArticleGetterActor.start()
+    article = article_getter_actor.ask({'id': article_id,
+                                        'version': version})
+    # Stop actor
+    article_getter_actor.stop()
+
     if article is None:
         return 'No article', 404
     else:

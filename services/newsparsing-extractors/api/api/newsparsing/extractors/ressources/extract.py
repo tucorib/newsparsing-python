@@ -7,8 +7,7 @@ from flask.blueprints import Blueprint
 from flask.globals import request
 from flask.json import jsonify
 
-from core.newsparsing.extractors.constants.extractors import NEWSPAPER3K
-from core.newsparsing.extractors.newspaper3k import extract_fields
+from core.newsparsing.extractors.extracts import ExtracterActor
 
 extractor_blueprint = Blueprint('extractor', __name__)
 
@@ -30,16 +29,20 @@ def extract(extractor):
         return 'No field specified', 403
 
     fields = data['fields']
+    del data['fields']
+    params = data
 
-    if extractor == NEWSPAPER3K:
-        return extract_newspaper3k(fields, data)
+    # Start actor
+    extracter_actor = ExtracterActor.start()
+    extracter_result = extracter_actor.ask({**{'extractor': extractor,
+                                               'fields': fields},
+                                            **params})
 
-    return 'Unknwown extractor', 403
+    # Stop actor
+    extracter_actor.stop()
 
+    # Parse result
+    if not extracter_result.get('error', None) is None:
+        return extracter_result['error'], 403
 
-def extract_newspaper3k(fields, data):
-    if not 'url' in data:
-        return 'No url specified', 403
-    url = data['url']
-    extracts = extract_fields(url, fields)
-    return jsonify(extracts), 200
+    return jsonify(extracter_result)

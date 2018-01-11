@@ -6,8 +6,8 @@ Created on 6 janv. 2018
 
 import unittest
 
+from core.newsparsing.sniffer.articles_sniffer import ArticlesSnifferActor
 from core.newsparsing.sniffer.config.application import get_source_fields
-from core.newsparsing.sniffer.sniffer import sniff
 from tests.core import CoreSnifferTestCase
 
 
@@ -20,9 +20,14 @@ class SnifferTestCase(unittest.TestCase, CoreSnifferTestCase):
         CoreSnifferTestCase.setUp(self)
 
     def test_sniff(self):
+        # Create iterator
+        articles_sniffer = ArticlesSnifferActor.start()
+        articles_iterator = articles_sniffer.ask({'source': self.TEST_SOURCE})
+        # Stop actor
+        articles_sniffer.stop()
+
         # Sniff RSS
-        for article in sniff(self.TEST_SOURCE):
-            self.assertEqual(article['source'], self.TEST_SOURCE, 'Returned article has wrong source')
+        for article in articles_iterator:
             self.assertIn('id', article, 'Article has no id')
             for field in get_source_fields(self.TEST_SOURCE):
-                self.assertIn(field, article, 'Missing firld %s in article' % field)
+                self.assertIn(field, article['content'], 'Missing field %s in article' % field)

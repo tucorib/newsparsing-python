@@ -7,8 +7,7 @@ from flask import json
 from flask.blueprints import Blueprint
 from flask.helpers import stream_with_context
 from flask.wrappers import Response
-
-from core.newsparsing.sniffer.sniffer import sniff as core_sniff
+from core.newsparsing.sniffer.articles_sniffer import ArticlesSnifferActor
 
 sniffer_blueprint = Blueprint('sniffer', __name__)
 
@@ -34,6 +33,11 @@ def stream_json_array(iterator):
 @sniffer_blueprint.route('/<source>',
                          methods=['GET'])
 def sniff(source):
-    return Response(
-                    stream_json_array(core_sniff(source)),
+    # Create iterator
+    articles_sniffer = ArticlesSnifferActor.start()
+    articles_iterator = articles_sniffer.ask({'source': source})
+    # Stop actor
+    articles_sniffer.stop()
+
+    return Response(stream_json_array(articles_iterator),
                     mimetype="application/json")
