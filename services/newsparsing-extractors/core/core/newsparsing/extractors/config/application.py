@@ -21,6 +21,10 @@ def load_configuration(configuration_path):
         logging.config.fileConfig(configuration['logger'])
 
     logger.debug('Configuration: %s' % configuration_path)
+    # Log extractors
+    logger.info('Extractors:')
+    for extractor in get_extractors():
+        logger.info('* %s' % extractor)
 
 
 def get_configuration():

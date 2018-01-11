@@ -21,6 +21,10 @@ def load_configuration(configuration_path):
         logging.config.fileConfig(configuration['logger'])
 
     logger.debug('Configuration: %s' % configuration_path)
+    # Log sources
+    logger.info('Sources:')
+    for source in get_sources():
+        logger.info('* %s' % source)
 
 
 def get_configuration():
