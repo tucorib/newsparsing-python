@@ -11,7 +11,10 @@ import feedparser
 import pykka
 
 from core.newsparsing.sourcers import create_article
-from core.newsparsing.sourcers.config.rss import get_rss_source_url
+from core.newsparsing.sourcers.config.application import get_sources
+from core.newsparsing.sourcers.config.rss import get_source_url
+from core.newsparsing.sourcers.errors import MissingMessageKeyException, \
+    UnknownSourceException, NoUrlException
 
 logger = logging.getLogger('newsparsing.sourcers')
 
@@ -19,13 +22,25 @@ logger = logging.getLogger('newsparsing.sourcers')
 class FeedparserActor(pykka.ThreadingActor):
 
     def on_receive(self, message):
+        if not message.get('source', None):
+            raise MissingMessageKeyException('source')
+
         source = message['source']
 
-        # Get rss url
-        rss_url = get_rss_source_url(source)
+        # Check source
+        if source not in get_sources():
+            raise UnknownSourceException(source)
+
+        # Get url
+        url = get_source_url(source)
+
+        # Check url
+        if not url:
+            raise NoUrlException(source)
+
         # Get articles urls
-        logger.debug('feedparser.parse %s' % rss_url)
-        rss_parsing = feedparser.parse(rss_url)
+        logger.debug('feedparser.parse %s' % url)
+        rss_parsing = feedparser.parse(url)
         # Parse articles
         for rss_item in rss_parsing.entries:
             # Get article url
@@ -44,4 +59,5 @@ class FeedparserActor(pykka.ThreadingActor):
                     article['updated'] = mktime(rss_item['updated_parsed'])
                 if not rss_item.get('expired_parsed', None) is None:
                     article['expired'] = mktime(rss_item['expired_parsed'])
+                # Yield article
                 yield article
