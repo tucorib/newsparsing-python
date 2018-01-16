@@ -36,13 +36,13 @@ class ArticlesActor(pykka.ThreadingActor):
         # Start actor according to sourcer
         if sourcer == FEEDPARSER:
             # Start actor
-            self.parser_actor = FeedparserActor.start(self)
+            parser_actor = FeedparserActor.start(self)
             try:
                 for article in parser_actor.ask({'source': source}):
                     yield article
             finally:
                 # Stop actor
-                self.parser_actor.stop()
+                parser_actor.stop()
         else:
             # If here, it means that sourcer is unknown
             raise UnknownSourcerException(sourcer)

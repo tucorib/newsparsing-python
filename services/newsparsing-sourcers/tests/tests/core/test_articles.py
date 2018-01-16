@@ -4,7 +4,6 @@ Created on 9 janv. 2018
 @author: nribeiro
 '''
 from _collections_abc import Iterator
-from asyncio.queues import Queue
 import unittest
 
 from core.newsparsing.sourcers.articles import ArticlesActor

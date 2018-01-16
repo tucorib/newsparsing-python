@@ -12,6 +12,13 @@ from core.newsparsing.extractors.extracts import ExtracterActor
 extractor_blueprint = Blueprint('extractor', __name__)
 
 
+@extractor_blueprint.errorhandler(Exception)
+def handle_invalid_usage(error):
+    response = jsonify({'error': str(error)})
+    response.status_code = 500
+    return response
+
+
 def __get_json_data(request):
     if request.headers['Content-Type'] == 'application/json':
         if request.get_json() is None:
@@ -23,26 +30,25 @@ def __get_json_data(request):
 
 @extractor_blueprint.route('/<extractor>/extract', methods=['POST'])
 def extract(extractor):
-    data = __get_json_data(request)
-
-    if not 'fields' in data:
-        return 'No field specified', 403
-
-    fields = data['fields']
-    del data['fields']
-    params = data
-
     # Start actor
     extracter_actor = ExtracterActor.start()
-    extracter_result = extracter_actor.ask({**{'extractor': extractor,
-                                               'fields': fields},
-                                            **params})
 
-    # Stop actor
-    extracter_actor.stop()
+    # Get response
+    response = None
+    # and exception eventually raised
+    exception = None
+    try:
+        response = jsonify(extracter_actor.ask({**{'extractor': extractor},
+                                                **__get_json_data(request)}))
+    except Exception as e:
+        exception = e
+    finally:
+        # Stop actor
+        extracter_actor.stop()
 
-    # Parse result
-    if not extracter_result.get('error', None) is None:
-        return extracter_result['error'], 403
-
-    return jsonify(extracter_result)
+    # If exception, raise it
+    if exception:
+        raise exception
+    # Return response
+    if response:
+        return response

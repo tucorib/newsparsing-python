@@ -1,7 +1,7 @@
 '''
-Created on 6 janv. 2018
+Created on 16 janv. 2018
 
-@author: tuco
+@author: nribeiro
 '''
 import unittest
 
@@ -12,9 +12,10 @@ from core.newsparsing.extractors.constants.extractors import NEWSPAPER3K
 from tests.api import FlaskTestCase
 
 
-class FlaskNewspaper3kTestCase(unittest.TestCase, FlaskTestCase):
+class FlaskExtractTestCase(unittest.TestCase, FlaskTestCase):
 
-    TEST_URL = "http://edition.cnn.com/2013/11/27/justice/tucson-arizona-captive-girls/"
+    TEST_UNKNOWN_EXTRACTOR = 'unknown-extractor'
+
     TEST_EXTRACTOR = NEWSPAPER3K
 
     def setUp(self):
@@ -26,23 +27,22 @@ class FlaskNewspaper3kTestCase(unittest.TestCase, FlaskTestCase):
         unittest.TestCase.tearDown(self)
         FlaskTestCase.tearDown(self)
 
-    def test_no_url(self):
-        response = self.client.post('/extractor/%s/extract' % self.TEST_EXTRACTOR,
+    def test_unknown_extractor(self):
+        response = self.client.post('/extractor/%s/extract' % self.TEST_UNKNOWN_EXTRACTOR,
                                     data=json.dumps({
                                         'fields': self.TEST_FIELDS,
                                     }),
                                    headers=self.get_api_headers())
         self.assertResponseCode(response, 500)
         self.assertDictEqual(json.loads(response.data),
-                             {'error': 'Missing key url'},
+                             {'error': 'Unknown extractor %s' % self.TEST_UNKNOWN_EXTRACTOR},
                              'Wrong error message')
 
-    def test_extract(self):
-        # Test extract
+    def test_no_fields(self):
         response = self.client.post('/extractor/%s/extract' % self.TEST_EXTRACTOR,
-                                    data=json.dumps({
-                                        'fields': self.TEST_FIELDS,
-                                        'url': self.TEST_URL
-                                    }),
-                                    headers=self.get_api_headers())
-        self.assertResponseCode(response, 200)
+                                    data=json.dumps({}),
+                                   headers=self.get_api_headers())
+        self.assertResponseCode(response, 500)
+        self.assertDictEqual(json.loads(response.data),
+                             {'error': 'Missing key fields'},
+                             'Wrong error message')
