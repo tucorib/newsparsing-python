@@ -14,7 +14,7 @@ from tests.api import FlaskTestCase
 
 class ApiSnifferTestCase(unittest.TestCase, FlaskTestCase):
 
-    TEST_SOURCE = "slate"
+    TEST_SOURCE = "test"
 
     def setUp(self):
         unittest.TestCase.setUp(self)
@@ -24,6 +24,14 @@ class ApiSnifferTestCase(unittest.TestCase, FlaskTestCase):
         unittest.TestCase.tearDown(self)
         FlaskTestCase.tearDown(self)
 
+    @classmethod
+    def setUpClass(cls):
+        FlaskTestCase.setUpClass()
+         
+    @classmethod
+    def tearDownClass(cls):
+        FlaskTestCase.tearDownClass()
+    
     def test_get(self):
         # Empty extractor
         response = self.client.get('/sniff/%s' % self.TEST_SOURCE)

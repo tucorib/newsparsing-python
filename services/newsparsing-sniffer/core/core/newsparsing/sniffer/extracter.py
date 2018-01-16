@@ -9,22 +9,25 @@ import logging
 import pykka
 import requests
 
-from core.newsparsing.sniffer.config.application import \
-    get_service_extractors, get_source_fields, get_source_field_extractors
+from core.newsparsing.sniffer.config.application import get_source_fields, get_source_field_extractors, \
+    get_service_extractors
 from core.newsparsing.sniffer.constants.extractors import NEWSPAPER3K
+from core.newsparsing.sniffer.errors import MissingMessageKeyException
 
 logger = logging.getLogger('newsparsing.sniffer')
 
 
 class ArticleExtracterActor(pykka.ThreadingActor):
 
-    def __init__(self, queue, *args, **kwargs):
+    def __init__(self, parent, *args, **kwargs):
         pykka.ThreadingActor.__init__(self, *args, **kwargs)
-        self.queue = queue
+        self.parent = parent
 
     def on_receive(self, message):
-        article = message['article']
+        if not message.get('article', None):
+            raise MissingMessageKeyException('article')
 
+        article = message['article']
         source = article['source']
 
         # Get fields to extract
@@ -50,6 +53,12 @@ class ArticleExtracterActor(pykka.ThreadingActor):
                                                                          extractor),
                                             data=json.dumps(params),
                                             headers={'Content-Type': 'application/json'})
+
+            # Handle error
+            if not extract_request.status_code == 200:
+                raise Exception(extract_request.content)
+
+            # Store extracts
             extracts[extractor] = extract_request.json()
 
         # Build content
@@ -58,8 +67,10 @@ class ArticleExtracterActor(pykka.ThreadingActor):
             for extractor in get_source_field_extractors(source, field):
                 content[field] = extracts[extractor][field]
 
-        # Put extracts in queue
-        self.queue.put({'id': article['id'], 'content': content})
+        # Return extracts
+        self.parent.tell({'command': 'extract',
+                          'id': article['id'],
+                          'content': content})
 
     def __build_params(self, article, extractor, params):
         if extractor == NEWSPAPER3K:
