@@ -24,13 +24,11 @@ class ApiSnifferTestCase(unittest.TestCase, FlaskTestCase):
         unittest.TestCase.tearDown(self)
         FlaskTestCase.tearDown(self)
 
-    @classmethod
-    def setUpClass(cls):
-        FlaskTestCase.setUpClass()
-         
-    @classmethod
-    def tearDownClass(cls):
-        FlaskTestCase.tearDownClass()
+    def setUpModule(self):
+        FlaskTestCase.setUpModule(self)
+    
+    def tearDownModule(self):
+        FlaskTestCase.tearDownModule(self)
     
     def test_get(self):
         # Empty extractor

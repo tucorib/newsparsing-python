@@ -31,13 +31,11 @@ class FlaskTestCase(CoreSnifferTestCase):
     def tearDown(self):
         self.flask_app_context.pop()
 
-    @classmethod
-    def setUpClass(cls):
-        CoreSnifferTestCase.setUpClass()
+    def setUpModule(self):
+        CoreSnifferTestCase.setUpModule(self)
          
-    @classmethod
-    def tearDownClass(cls):
-        CoreSnifferTestCase.tearDownClass()
+    def tearDownModule(self):
+        CoreSnifferTestCase.tearDownModule(self)
         
     def get_api_headers(self):
         return {

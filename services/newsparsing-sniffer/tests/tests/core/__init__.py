@@ -29,14 +29,12 @@ class CoreSnifferTestCase():
         # Load configuration
         load_configuration(self.APPLICATION_CONFIGURATION)
 
-    @classmethod
-    def setUpClass(cls):
+    def setUpModule(self):
         # Start mock services
         start_sourcer_mock()
         start_extractor_mock()
     
-    @classmethod
-    def tearDownClass(cls):
+    def tearDownModule(self):
         # Stop mock services
         stop_sourcer_mock()
         stop_extractor_mock()

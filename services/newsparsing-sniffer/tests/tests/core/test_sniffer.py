@@ -30,13 +30,11 @@ class SnifferTestCase(unittest.TestCase, CoreSnifferTestCase):
         self.articles_sniffer.stop()
         unittest.TestCase.tearDown(self)
 
-    @classmethod
-    def setUpClass(cls):
-        CoreSnifferTestCase.setUpClass()
-         
-    @classmethod
-    def tearDownClass(cls):
-        CoreSnifferTestCase.tearDownClass()
+    def setUpModule(self):
+        CoreSnifferTestCase.setUpModule(self)
+    
+    def tearDownModule(self):
+        CoreSnifferTestCase.tearDownModule(self)
         
     def test_no_command(self):
         with self.assertRaises(MissingMessageKeyException) as error:

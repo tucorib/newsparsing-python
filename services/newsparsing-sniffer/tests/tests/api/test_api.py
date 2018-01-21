@@ -19,6 +19,12 @@ class APITestCase(unittest.TestCase, FlaskTestCase):
         unittest.TestCase.tearDown(self)
         FlaskTestCase.tearDown(self)
 
+    def setUpModule(self):
+        FlaskTestCase.setUpModule(self)
+    
+    def tearDownModule(self):
+        FlaskTestCase.tearDownModule(self)
+        
     def test_404(self):
         response = self.client.get(self.WRONG_URL,
                                    headers=self.get_api_headers())
