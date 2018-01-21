@@ -5,75 +5,71 @@ Created on 9 janv. 2018
 '''
 from _io import BytesIO
 from queue import Queue
-import json
 import logging
 
+from flask import json
 import ijson
 import pykka
 import requests
 
-from core.newsparsing.sniffer.config.application import get_service_sourcers
+from core.newsparsing.sniffer.config.application import get_service_sourcers, \
+    get_source_field_extractors, get_service_extractors, get_source_fields
+from core.newsparsing.sniffer.constants.extractors import NEWSPAPER3K
 from core.newsparsing.sniffer.errors import MissingMessageKeyException
-from core.newsparsing.sniffer.extracter import ArticleExtracterActor
 
 logger = logging.getLogger('newsparsing.sniffer')
 
 
-class ArticlesIterator:
-
-    actorsRef = {}
-    readys = Queue()
-
-    def ask(self, parentActor, article):
-        # Start actor
-        extracter_actor = ArticleExtracterActor.start(parentActor)
-        # Ask extraction
-        extracter_actor.ask({'article': article},
-                            block=False)
-        # Register actorRef
-        self.actorsRef[article['id']] = extracter_actor
-
-    def answer(self, _id, content):
-        # Get actor ref
-        actorRef = self.actorsRef[_id]
-        # Stop actor
-        actorRef.stop()
-        # Remove actor
-        del self.actorsRef[_id]
-        # Add content
-        self.readys.put({'id': _id, 'content': content})
-
-    def __iter__(self):
-        return self
-
-    def __next__(self):
-        # Raise stop iteration if no article pending
-        if len(self.actorsRef) == 0:
-            raise StopIteration
-
-        # Pop a ready article
-        return self.readys.get()
-
-
 class ArticlesSnifferActor(pykka.ThreadingActor):
+    
+    def on_start(self):
+        pykka.ThreadingActor.on_start(self)
+        
+        # Create sourcer actor
+        self.actor_sourcer = ArticlesSourcerActor.start()
+    
+    def on_stop(self):
+        pykka.ThreadingActor.on_stop(self)
+        # Stop sourcer
+        self.actor_sourcer.stop()
+        
+    def on_receive(self, message):
+        # Article queue
+        queue = Queue()
+        # Extractor actors
+        self.actors_extractors = {}
+        # Launch extractors
+        extractors = {}
+        for article in self.actor_sourcer.ask(message):
+            # Start actor
+            extracter_actor = ArticleExtracterActor.start(queue)
+            # Register actorRef
+            extractors[article['id']] = extracter_actor
+            # Ask extraction
+            extracter_actor.ask({'article': article},
+                                block=False)
+        
+        # Consume iterator
+        try:
+            while len(extractors) > 0:
+                article = queue.get()
+                # Stop extractor actor
+                extractors[article['id']].stop()
+                # Delete actor
+                del extractors[article['id']] 
+                # Yield article
+                yield article
+        finally:
+            # Stop extractors
+            for actor_extractor in extractors.values():
+                actor_extractor.stop()
+        
+        
+class ArticlesSourcerActor(pykka.ThreadingActor):
 
     def on_receive(self, message):
-        if not message.get('command', None):
-            raise MissingMessageKeyException('command')
-
-        command = message.get('command')
-
-        if command == 'sniff':
-            return self.__sniff(message)
-        if command == 'extract':
-            return self.__extract(message)
-
-    def __sniff(self, message):
         if not message.get('source', None):
             raise MissingMessageKeyException('source')
-
-        # Create async iterator
-        self.iterator = ArticlesIterator()
 
         # Get params
         source = message['source']
@@ -84,22 +80,71 @@ class ArticlesSnifferActor(pykka.ThreadingActor):
                                                                  source))
 
         # Handle error
+        if source_request.status_code == 404:
+            raise Exception('Service sourcers unavailable')
         if not source_request.status_code == 200:
             raise Exception(json.loads(source_request.content)['error'])
 
         # Extract articles
         for article in ijson.items(BytesIO(source_request.content), 'item'):
-            self.iterator.ask(self, article)
-
-        # Return contents
-        for article in self.iterator:
             yield article
 
-    def __extract(self, message):
-        if not message.get('id', None):
-            raise MissingMessageKeyException('id')
-        if not message.get('content', None):
-            raise MissingMessageKeyException('content')
 
-        # Add extract to iterator
-        self.iterator.answer(message['id'], message['content'])
+class ArticleExtracterActor(pykka.ThreadingActor):
+
+    def __init__(self, queue, *args, **kwargs):
+        pykka.ThreadingActor.__init__(self, *args, **kwargs)
+        self.queue = queue
+
+    def on_receive(self, message):
+        if not message.get('article', None):
+            raise MissingMessageKeyException('article')
+
+        article = message['article']
+        source = article['source']
+
+        # Get fields to extract
+        fields = get_source_fields(source)
+        # Get extractors for source
+        extractors = set()
+        for field in fields:
+            extractors = extractors.union(get_source_field_extractors(source,
+                                                                      field))
+        # Get extracts
+        extracts = {}
+        for extractor in extractors:
+            # Request data
+            params = {
+                'fields': fields
+            }
+
+            self.__build_params(article, extractor, params)
+
+            # Request
+            logger.debug('Extract article %s' % article['id'])
+            extract_request = requests.post('%s/extractor/%s/extract' % (get_service_extractors(),
+                                                                         extractor),
+                                            data=json.dumps(params),
+                                            headers={'Content-Type': 'application/json'})
+
+            # Handle error
+            if extract_request.status_code == 404:
+                raise Exception('Service extractors unavailable')
+            if not extract_request.status_code == 200:
+                raise Exception(extract_request.content)
+
+            # Store extracts
+            extracts[extractor] = extract_request.json()
+
+        # Build content
+        content = {}
+        for field in fields:
+            for extractor in get_source_field_extractors(source, field):
+                content[field] = extracts[extractor][field]
+
+        # Return extracts
+        self.queue.put({'id': article['id'], 'content': content})
+
+    def __build_params(self, article, extractor, params):
+        if extractor == NEWSPAPER3K:
+            params['url'] = article['url']

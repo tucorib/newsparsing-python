@@ -14,6 +14,18 @@ from tests.mock.extractor_service import start_extractor_mock, \
 from tests.mock.sourcer_service import start_sourcer_mock, stop_sourcer_mock
 
 
+def setUpModule():
+    # Start mock services
+    start_sourcer_mock()
+    start_extractor_mock()
+
+
+def tearDownModule():
+    # Stop mock services
+    stop_sourcer_mock()
+    stop_extractor_mock()
+
+
 class CoreSnifferTestCase():
 
     APPLICATION_CONFIGURATION = os.path.join(CONFIG_DIR,
@@ -28,13 +40,3 @@ class CoreSnifferTestCase():
     def setUp(self):
         # Load configuration
         load_configuration(self.APPLICATION_CONFIGURATION)
-
-    def setUpModule(self):
-        # Start mock services
-        start_sourcer_mock()
-        start_extractor_mock()
-    
-    def tearDownModule(self):
-        # Stop mock services
-        stop_sourcer_mock()
-        stop_extractor_mock()

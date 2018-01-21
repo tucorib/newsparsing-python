@@ -31,12 +31,6 @@ class FlaskTestCase(CoreSnifferTestCase):
     def tearDown(self):
         self.flask_app_context.pop()
 
-    def setUpModule(self):
-        CoreSnifferTestCase.setUpModule(self)
-         
-    def tearDownModule(self):
-        CoreSnifferTestCase.tearDownModule(self)
-        
     def get_api_headers(self):
         return {
             'Accept': 'application/json',

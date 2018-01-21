@@ -49,8 +49,7 @@ def sniff(source):
     exception = None
 
     try:
-        response = stream_iterator(sniffer_actor.ask({'command': 'sniff',
-                                                      'source': source}))
+        response = stream_iterator(sniffer_actor.ask({'source': source}))
     except Exception as e:
         exception = e
     finally:
