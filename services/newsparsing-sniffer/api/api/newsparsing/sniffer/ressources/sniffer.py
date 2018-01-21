@@ -5,8 +5,10 @@ Created on 6 janv. 2018
 '''
 from flask import json, jsonify
 from flask.blueprints import Blueprint
+from flask.globals import request
 from flask.helpers import stream_with_context
 from flask.wrappers import Response
+
 from core.newsparsing.sniffer.sniffer import ArticlesSnifferActor
 
 sniffer_blueprint = Blueprint('sniffer', __name__)
@@ -38,7 +40,7 @@ def stream_iterator(iterator):
 
 
 @sniffer_blueprint.route('/<source>',
-                         methods=['GET'])
+                         methods=['GET', 'POST'])
 def sniff(source):
     # Start actor
     sniffer_actor = ArticlesSnifferActor.start()
@@ -49,7 +51,13 @@ def sniff(source):
     exception = None
 
     try:
-        response = stream_iterator(sniffer_actor.ask({'source': source}))
+        if request.method == 'GET':
+            response = stream_iterator(sniffer_actor.ask({'source': source}))
+        if request.method == 'POST':
+            sniffer_actor.ask({'source': source,
+                               'store': True},
+                               block=False)
+            response = jsonify({'message': 'launched'})
     except Exception as e:
         exception = e
     finally:
