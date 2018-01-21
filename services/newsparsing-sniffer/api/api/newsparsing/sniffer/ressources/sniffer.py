@@ -3,41 +3,62 @@ Created on 6 janv. 2018
 
 @author: tuco
 '''
-from flask import json
+from flask import json, jsonify
 from flask.blueprints import Blueprint
 from flask.helpers import stream_with_context
 from flask.wrappers import Response
-from core.newsparsing.sniffer.articles_sniffer import ArticlesSnifferActor
+from core.newsparsing.sniffer.sniffer import ArticlesSnifferActor
 
 sniffer_blueprint = Blueprint('sniffer', __name__)
 
 
-@stream_with_context
-def stream_json_array(iterator):
-    try:
-        prev = next(iterator)  # Get first result
-    except StopIteration:
-        # Empty iterator, return now
-        yield '[]'
-        raise StopIteration
+@sniffer_blueprint.errorhandler(Exception)
+def handle_invalid_usage(error):
+    response = jsonify({'error': str(error)})
+    response.status_code = 500
+    return response
 
-    yield '['
-    # Iterate
-    for _ in iterator:
-        yield '%s, ' % json.dumps(_)
-        prev = _
-    # Now yield the last iteration without comma but with the closing brackets
-    yield '%s]' % json.dumps(prev)
+
+def stream_iterator(iterator):
+    # Get first element
+    first = next(iterator)
+    if first is None:
+        # Empty queue, return empty JSON
+        return Response(json.dumps({}),
+                        mimetype="application/json")
+
+    def stream(iterator):
+        yield '[%s' % json.dumps(first)
+        for item in iterator:
+            yield ', %s' % json.dumps(item)
+        yield ']'
+
+    return Response(stream_with_context(stream(iterator)),
+                    mimetype="application/json")
 
 
 @sniffer_blueprint.route('/<source>',
                          methods=['GET'])
 def sniff(source):
-    # Create iterator
-    articles_sniffer = ArticlesSnifferActor.start()
-    articles_iterator = articles_sniffer.ask({'source': source})
-    # Stop actor
-    articles_sniffer.stop()
+    # Start actor
+    sniffer_actor = ArticlesSnifferActor.start()
 
-    return Response(stream_json_array(articles_iterator),
-                    mimetype="application/json")
+    # Get response for streaming
+    response = None
+    # and exception eventually raised
+    exception = None
+
+    try:
+        response = stream_iterator(sniffer_actor.ask({'source': source}))
+    except Exception as e:
+        exception = e
+    finally:
+        # Stop actor
+        sniffer_actor.stop()
+
+    # If exception, raise it
+    if exception:
+        raise exception
+    # Return response
+    if response:
+        return response

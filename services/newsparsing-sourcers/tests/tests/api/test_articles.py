@@ -1,7 +1,7 @@
 '''
-Created on 9 janv. 2018
+Created on 7 janv. 2018
 
-@author: nribeiro
+@author: tuco
 '''
 from _io import BytesIO
 import unittest
@@ -9,27 +9,17 @@ import unittest
 from flask import json
 import ijson
 
-from core.newsparsing.sniffer.config.application import get_source_fields
 from tests.api import FlaskTestCase
-from tests.core import setUpModule as coreSetUpModule, tearDownModule as coreTearDownModule
 
 
-def setUpModule():
-    coreSetUpModule()
-
-
-def tearDownModule():
-    coreTearDownModule()
-
-
-class ApiSnifferTestCase(unittest.TestCase, FlaskTestCase):
+class FlaskArticlesTestCase(unittest.TestCase, FlaskTestCase):
 
     TEST_UNKNOWN_SOURCE = 'unknown-source'
     TEST_NO_SOURCER = 'no-sourcer'
     TEST_NO_URL = 'no-url'
     TEST_UNKNOWN_SOURCER = 'unknown-sourcer'
-    
-    TEST_SOURCE = "test"
+
+    TEST_SOURCE = 'test'
 
     def setUp(self):
         unittest.TestCase.setUp(self)
@@ -39,8 +29,11 @@ class ApiSnifferTestCase(unittest.TestCase, FlaskTestCase):
         unittest.TestCase.tearDown(self)
         FlaskTestCase.tearDown(self)
 
+    def __get_articles(self, response):
+        return ijson.items(BytesIO(response.data), 'item')
+
     def test_unknown_source(self):
-        response = self.client.get('/sniff/%s' % self.TEST_UNKNOWN_SOURCE,
+        response = self.client.get('/source/%s/articles' % self.TEST_UNKNOWN_SOURCE,
                                    headers=self.get_api_headers())
         self.assertResponseCode(response, 500)
         self.assertDictEqual(json.loads(response.data),
@@ -48,7 +41,7 @@ class ApiSnifferTestCase(unittest.TestCase, FlaskTestCase):
                              'Wrong error message')
 
     def test_no_sourcer(self):
-        response = self.client.get('/sniff/%s' % self.TEST_NO_SOURCER,
+        response = self.client.get('/source/%s/articles' % self.TEST_NO_SOURCER,
                                    headers=self.get_api_headers())
         self.assertResponseCode(response, 500)
         self.assertDictEqual(json.loads(response.data),
@@ -56,7 +49,7 @@ class ApiSnifferTestCase(unittest.TestCase, FlaskTestCase):
                              'Wrong error message')
 
     def test_no_url(self):
-        response = self.client.get('/sniff/%s' % self.TEST_NO_URL,
+        response = self.client.get('/source/%s/articles' % self.TEST_NO_URL,
                                    headers=self.get_api_headers())
         self.assertResponseCode(response, 500)
         self.assertDictEqual(json.loads(response.data),
@@ -64,19 +57,25 @@ class ApiSnifferTestCase(unittest.TestCase, FlaskTestCase):
                              'Wrong error message')
 
     def test_unknown_sourcer(self):
-        response = self.client.get('/sniff/%s' % self.TEST_UNKNOWN_SOURCER,
+        response = self.client.get('/source/%s/articles' % self.TEST_UNKNOWN_SOURCER,
                                    headers=self.get_api_headers())
         self.assertResponseCode(response, 500)
         self.assertDictEqual(json.loads(response.data),
                              {'error': 'Source %s has an unknown sourcer' % self.TEST_UNKNOWN_SOURCER},
                              'Wrong error message')
-        
-    def test_source(self):
-        # Empty extractor
-        response = self.client.get('/sniff/%s' % self.TEST_SOURCE)
+
+    def test_sourcer_feedparser(self):
+        response = self.client.get('/source/%s/articles' % self.TEST_SOURCE,
+                                   headers=self.get_api_headers())
         self.assertResponseCode(response, 200)
 
-        for article in ijson.items(BytesIO(response.data), 'item'):
-            self.assertIn('id', article, 'Article has no id')
-            for field in get_source_fields(self.TEST_SOURCE):
-                self.assertIn(field, article['content'], 'Missing field %s in article' % field)
+        for article in self.__get_articles(response):
+            self.assertEqual(article['source'],
+                             self.TEST_SOURCE,
+                             'Returned article has wrong source')
+            self.assertIn('id',
+                          article,
+                          'Article has no id')
+            self.assertIn('url',
+                          article,
+                          'Article has no url')

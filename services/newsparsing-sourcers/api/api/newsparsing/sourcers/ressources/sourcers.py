@@ -3,45 +3,59 @@ Created on 6 janv. 2018
 
 @author: tuco
 '''
-from flask import Response, stream_with_context, json
+from flask import Response, stream_with_context, json, jsonify
 from flask.blueprints import Blueprint
-
 from core.newsparsing.sourcers.articles import ArticlesActor
-from core.newsparsing.sourcers.config.application import get_sources
 
 source_blueprint = Blueprint('source', __name__)
 
 
-@stream_with_context
-def stream_json_array(iterator):
-    try:
-        prev = next(iterator)  # Get first result
-    except StopIteration:
-        # Empty iterator, return now
-        yield '[]'
-        raise StopIteration
+@source_blueprint.errorhandler(Exception)
+def handle_invalid_usage(error):
+    response = jsonify({'error': str(error)})
+    response.status_code = 500
+    return response
 
-    yield '['
-    # Iterate
-    for _ in iterator:
-        yield '%s, ' % json.dumps(_)
-        prev = _
-    # Now yield the last iteration without comma but with the closing brackets
-    yield '%s]' % json.dumps(prev)
+
+def stream_iterator(iterator):
+    # Get first element
+    first = next(iterator)
+    if first is None:
+        # Empty queue, return empty JSON
+        return Response(json.dumps({}),
+                        mimetype="application/json")
+
+    def stream(iterator):
+        yield '[%s' % json.dumps(first)
+        for item in iterator:
+            yield ', %s' % json.dumps(item)
+        yield ']'
+
+    return Response(stream_with_context(stream(iterator)),
+                    mimetype="application/json")
 
 
 @source_blueprint.route('/<source>/articles',
                         methods=['GET'])
 def articles(source):
-    if source in get_sources():
-        # Start actor
-        articles_actor = ArticlesActor.start()
-        articles_iterator = articles_actor.ask({'source': source})
+    # Start actor
+    articles_actor = ArticlesActor.start()
+
+    # Get response for streaming
+    response = None
+    # and exception eventually raised
+    exception = None
+    try:
+        response = stream_iterator(articles_actor.ask({'source': source}))
+    except Exception as e:
+        exception = e
+    finally:
         # Stop actor
         articles_actor.stop()
 
-        return Response(
-                    stream_json_array(articles_iterator),
-                    mimetype="application/json")
-    else:
-        return 'Source unknown', 404
+    # If exception, raise it
+    if exception:
+        raise exception
+    # Return response
+    if response:
+        return response

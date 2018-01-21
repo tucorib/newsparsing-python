@@ -10,6 +10,7 @@ import pykka
 
 from core.newsparsing.extractors.config.application import get_extractors_fields
 from core.newsparsing.extractors.constants.extractors import NEWSPAPER3K
+from core.newsparsing.extractors.errors import MissingMessageKeyException
 
 logger = logging.getLogger('newsparsing.extractors')
 
@@ -19,16 +20,19 @@ ERROR_NO_URL = 'No url specified'
 class Newspaper3kActor(pykka.ThreadingActor):
 
     def on_receive(self, message):
-        fields = message.get('fields', None)
-        url = message.get('url', None)
+        # Check fields argument
+        if not message.get('fields', None):
+            raise MissingMessageKeyException('fields')
+        # Check url argument
+        if not message.get('url', None):
+            raise MissingMessageKeyException('url')
 
-        # Check extractor
-        if url is None:
-            return {'error': ERROR_NO_URL}
+        fields = message.get('fields')
+        url = message.get('url')
 
         logger.debug('[%s] Extracting %s from %s' % (NEWSPAPER3K,
-                                                 ', '.join(fields),
-                                                 url))
+                                                     ', '.join(fields),
+                                                     url))
         # Download article
         newspaper_article = NewspaperArticle(url=url)
         newspaper_article.download()
