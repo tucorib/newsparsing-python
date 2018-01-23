@@ -59,3 +59,30 @@ def articles(source):
     # Return response
     if response:
         return response
+
+
+@source_blueprint.route('/<source>/articles/<int:limit>',
+                        methods=['GET'])
+def articles_limit(source, limit):
+    # Start actor
+    articles_actor = ArticlesActor.start()
+
+    # Get response for streaming
+    response = None
+    # and exception eventually raised
+    exception = None
+    try:
+        response = stream_iterator(articles_actor.ask({'source': source,
+                                                       'limit': limit}))
+    except Exception as e:
+        exception = e
+    finally:
+        # Stop actor
+        articles_actor.stop()
+
+    # If exception, raise it
+    if exception:
+        raise exception
+    # Return response
+    if response:
+        return response

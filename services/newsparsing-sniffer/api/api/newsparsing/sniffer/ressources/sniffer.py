@@ -70,3 +70,31 @@ def sniff(source):
     # Return response
     if response:
         return response
+
+
+@sniffer_blueprint.route('/<source>/<int:limit>',
+                         methods=['GET'])
+def sniff_limit(source, limit):
+    # Start actor
+    sniffer_actor = ArticlesSnifferActor.start()
+
+    # Get response for streaming
+    response = None
+    # and exception eventually raised
+    exception = None
+
+    try:
+        response = stream_iterator(sniffer_actor.ask({'source': source,
+                                                      'limit': limit}))
+    except Exception as e:
+        exception = e
+    finally:
+        # Stop actor
+        sniffer_actor.stop()
+
+    # If exception, raise it
+    if exception:
+        raise exception
+    # Return response
+    if response:
+        return response
