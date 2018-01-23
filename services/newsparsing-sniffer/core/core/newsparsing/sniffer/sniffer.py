@@ -95,7 +95,7 @@ class ArticlesSourcerActor(pykka.ThreadingActor):
         limit = message.get('limit', None)
 
         # Get articles from source
-        if limit:
+        if limit is not None:
             logger.debug('Source articles from %s [limit = %d]' % (source, limit))
             source_request = requests.get('%s/source/%s/articles/%d' % (get_service_sourcers(),
                                                                         source,
