@@ -28,7 +28,7 @@ class ApiSnifferTestCase(unittest.TestCase, FlaskTestCase):
     TEST_NO_SOURCER = 'no-sourcer'
     TEST_NO_URL = 'no-url'
     TEST_UNKNOWN_SOURCER = 'unknown-sourcer'
-    
+
     TEST_SOURCE = "test"
 
     def setUp(self):
@@ -70,8 +70,8 @@ class ApiSnifferTestCase(unittest.TestCase, FlaskTestCase):
         self.assertDictEqual(json.loads(response.data),
                              {'error': 'Source %s has an unknown sourcer' % self.TEST_UNKNOWN_SOURCER},
                              'Wrong error message')
-        
-    def test_source(self):
+
+    def test_sniff_get(self):
         # Empty extractor
         response = self.client.get('/sniff/%s' % self.TEST_SOURCE)
         self.assertResponseCode(response, 200)
@@ -80,3 +80,8 @@ class ApiSnifferTestCase(unittest.TestCase, FlaskTestCase):
             self.assertIn('id', article, 'Article has no id')
             for field in get_source_fields(self.TEST_SOURCE):
                 self.assertIn(field, article['content'], 'Missing field %s in article' % field)
+
+    def test_sniff_post(self):
+        # Empty extractor
+        response = self.client.post('/sniff/%s' % self.TEST_SOURCE)
+        self.assertResponseCode(response, 200)
