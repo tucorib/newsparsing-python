@@ -10,10 +10,10 @@ from time import mktime
 import feedparser
 import pykka
 
-from core.newsparsing.sourcers import create_article
-from core.newsparsing.sourcers.config.application import get_sources
-from core.newsparsing.sourcers.config.rss import get_source_url
-from core.newsparsing.sourcers.errors import MissingMessageKeyException, \
+from newsparsing.sourcers.core import create_article
+from newsparsing.sourcers.core.config.application import get_sources
+from newsparsing.sourcers.core.config.rss import get_source_url
+from newsparsing.sourcers.core.errors import MissingMessageKeyException, \
     UnknownSourceException, NoUrlException
 
 logger = logging.getLogger('newsparsing.sourcers')

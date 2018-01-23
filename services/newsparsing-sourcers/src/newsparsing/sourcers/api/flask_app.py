@@ -4,8 +4,7 @@ Created on 5 janv. 2018
 @author: tuco
 '''
 from flask import Flask
-
-from api.newsparsing.sourcers.ressources.sourcers import source_blueprint
+from newsparsing.sourcers.api.ressources.sourcers import source_blueprint
 
 
 def create_flask_app():

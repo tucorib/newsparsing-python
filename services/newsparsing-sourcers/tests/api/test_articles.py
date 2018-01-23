@@ -8,8 +8,7 @@ import unittest
 
 from flask import json
 import ijson
-
-from tests.api import FlaskTestCase
+from api import FlaskTestCase
 
 
 class FlaskArticlesTestCase(unittest.TestCase, FlaskTestCase):
@@ -82,7 +81,8 @@ class FlaskArticlesTestCase(unittest.TestCase, FlaskTestCase):
 
     def test_source_limit(self):
         for limit in range(0, 10):
-            response = self.client.get('/source/%s/articles/%d' % (self.TEST_SOURCE, limit),
+            response = self.client.get('/source/%s/articles/%d' % (self.TEST_SOURCE,
+                                                                   limit),
                                        headers=self.get_api_headers())
             self.assertResponseCode(response, 200)
 

@@ -5,7 +5,7 @@ Created on 6 janv. 2018
 '''
 from flask import Response, stream_with_context, json, jsonify
 from flask.blueprints import Blueprint
-from core.newsparsing.sourcers.articles import ArticlesActor
+from newsparsing.sourcers.core.articles import ArticlesActor
 
 source_blueprint = Blueprint('source', __name__)
 

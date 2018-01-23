@@ -45,4 +45,3 @@ def get_source_database_url(source):
 def get_source_sourcer(source):
     return get_configuration().get('sources.%s.sourcer' % source,
                                    None)
-

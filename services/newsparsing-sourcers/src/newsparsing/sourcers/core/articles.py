@@ -5,12 +5,12 @@ Created on 11 janv. 2018
 '''
 import pykka
 
-from core.newsparsing.sourcers.config.application import get_source_sourcer, \
-    get_sources
-from core.newsparsing.sourcers.constants.sourcers import FEEDPARSER
-from core.newsparsing.sourcers.errors import MissingMessageKeyException, \
+from newsparsing.sourcers.core.config.application import get_sources, \
+    get_source_sourcer
+from newsparsing.sourcers.core.constants.sourcers import FEEDPARSER
+from newsparsing.sourcers.core.errors import MissingMessageKeyException, \
     UnknownSourceException, NoSourcerException, UnknownSourcerException
-from core.newsparsing.sourcers.sourcers.feedparser import FeedparserActor
+from newsparsing.sourcers.core.sourcers.feedparser import FeedparserActor
 
 
 class ArticlesActor(pykka.ThreadingActor):

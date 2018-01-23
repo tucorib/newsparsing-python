@@ -6,11 +6,11 @@ Created on 9 janv. 2018
 from _collections_abc import Iterator
 import unittest
 
-from core.newsparsing.sourcers.articles import ArticlesActor
-from core.newsparsing.sourcers.errors import MissingMessageKeyException, \
+from core import SourcersTestCase
+from newsparsing.sourcers.core.articles import ArticlesActor
+from newsparsing.sourcers.core.errors import MissingMessageKeyException, \
     UnknownSourceException, NoSourcerException, NoUrlException, \
     UnknownSourcerException
-from tests.core import SourcersTestCase
 
 
 class CoreArticlesTestCase(unittest.TestCase, SourcersTestCase):
@@ -103,4 +103,6 @@ class CoreArticlesTestCase(unittest.TestCase, SourcersTestCase):
 
                 article_count += 1
 
-                self.assertLessEqual(article_count, limit, 'Wrong count returned')
+                self.assertLessEqual(article_count,
+                                     limit,
+                                     'Wrong count returned')

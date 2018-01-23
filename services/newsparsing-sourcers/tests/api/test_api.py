@@ -4,7 +4,7 @@ Created on 7 janv. 2018
 @author: tuco
 '''
 import unittest
-from tests.api import FlaskTestCase
+from api import FlaskTestCase
 
 
 class APITestCase(unittest.TestCase, FlaskTestCase):
