@@ -6,9 +6,9 @@ Created on 7 janv. 2018
 import argparse
 import os
 
-from api.newsparsing.sniffer.flask_app import create_flask_app, \
+from newsparsing.sniffer.api.flask_app import create_flask_app, \
     load_flask_configuration
-from core.newsparsing.sniffer.config.application import load_configuration
+from newsparsing.sniffer.core.config.application import load_configuration
 
 if __name__ == '__main__':
     # Arguments

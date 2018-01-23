@@ -8,8 +8,7 @@ from flask.blueprints import Blueprint
 from flask.globals import request
 from flask.helpers import stream_with_context
 from flask.wrappers import Response
-
-from core.newsparsing.sniffer.sniffer import ArticlesSnifferActor
+from newsparsing.sniffer.core.sniffer import ArticlesSnifferActor
 
 sniffer_blueprint = Blueprint('sniffer', __name__)
 

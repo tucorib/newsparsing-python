@@ -9,9 +9,9 @@ import unittest
 from flask import json
 import ijson
 
-from core.newsparsing.sniffer.config.application import get_source_fields
-from tests.api import FlaskTestCase
-from tests.core import setUpModule as coreSetUpModule, tearDownModule as coreTearDownModule
+from api import FlaskTestCase
+from core import setUpModule as coreSetUpModule, tearDownModule as coreTearDownModule
+from newsparsing.sniffer.core.config.application import get_source_fields
 
 
 def setUpModule():

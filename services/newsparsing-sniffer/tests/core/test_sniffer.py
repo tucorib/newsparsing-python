@@ -6,10 +6,10 @@ Created on 6 janv. 2018
 
 import unittest
 
-from core.newsparsing.sniffer.config.application import get_source_fields
-from core.newsparsing.sniffer.errors import MissingMessageKeyException
-from core.newsparsing.sniffer.sniffer import ArticlesSnifferActor
-from tests.core import CoreSnifferTestCase, setUpModule as coreSetUpModule, tearDownModule as coreTearDownModule
+from core import CoreSnifferTestCase, setUpModule as coreSetUpModule, tearDownModule as coreTearDownModule
+from newsparsing.sniffer.core.config.application import get_source_fields
+from newsparsing.sniffer.core.errors import MissingMessageKeyException
+from newsparsing.sniffer.core.sniffer import ArticlesSnifferActor
 
 
 def setUpModule():

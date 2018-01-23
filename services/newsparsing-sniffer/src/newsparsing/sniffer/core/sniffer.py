@@ -12,11 +12,11 @@ import ijson
 import pykka
 import requests
 
-from core.newsparsing.sniffer.config.application import get_service_sourcers, \
-    get_source_field_extractors, get_service_extractors, get_source_fields, \
-    get_service_articles
-from core.newsparsing.sniffer.constants.extractors import NEWSPAPER3K
-from core.newsparsing.sniffer.errors import MissingMessageKeyException
+from newsparsing.sniffer.core.config.application import get_service_articles, \
+    get_service_sourcers, get_source_fields, get_source_field_extractors, \
+    get_service_extractors
+from newsparsing.sniffer.core.constants.extractors import NEWSPAPER3K
+from newsparsing.sniffer.core.errors import MissingMessageKeyException
 
 logger = logging.getLogger('newsparsing.sniffer')
 

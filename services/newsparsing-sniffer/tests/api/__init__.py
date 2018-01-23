@@ -1,14 +1,13 @@
 import datetime
 import os
-
-from api.newsparsing.sniffer.flask_app import create_flask_app, \
+from core import CoreSnifferTestCase
+from newsparsing.sniffer.api.flask_app import create_flask_app, \
     load_flask_configuration
-from tests import CONFIG_DIR
-from tests.core import CoreSnifferTestCase
 
 
 class FlaskTestCase(CoreSnifferTestCase):
 
+    CONFIG_DIR = os.path.join(os.path.dirname(__file__), "../../conf")
     FLASK_CONFIGURATION_FILE = os.path.join(CONFIG_DIR, "tests.flask.conf")
 
     def setUp(self):
