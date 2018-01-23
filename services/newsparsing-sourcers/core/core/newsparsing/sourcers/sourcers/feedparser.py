@@ -43,10 +43,10 @@ class FeedparserActor(pykka.ThreadingActor):
         logger.debug('feedparser.parse %s' % url)
         rss_parsing = feedparser.parse(url)
         # Parse articles
-        for rss_item in rss_parsing.entries:
-            if limit is not None and limit <= 0:
-                break
-
+        entries = rss_parsing.entries
+        if limit is not None:
+            entries = entries[0:limit]
+        for rss_item in entries:
             # Get article url
             article_url = rss_item.get('link', None)
 
@@ -65,6 +65,3 @@ class FeedparserActor(pykka.ThreadingActor):
                     article['expired'] = mktime(rss_item['expired_parsed'])
                 # Yield article
                 yield article
-
-                if limit is not None:
-                    limit -= 1

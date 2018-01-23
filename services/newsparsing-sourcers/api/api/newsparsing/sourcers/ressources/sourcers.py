@@ -18,11 +18,12 @@ def handle_invalid_usage(error):
 
 
 def stream_iterator(iterator):
-    # Get first element
-    first = next(iterator)
-    if first is None:
+    try:
+        # Get first element
+        first = next(iterator)
+    except StopIteration:
         # Empty queue, return empty JSON
-        return Response(json.dumps({}),
+        return Response(json.dumps([]),
                         mimetype="application/json")
 
     def stream(iterator):

@@ -64,7 +64,7 @@ class FlaskArticlesTestCase(unittest.TestCase, FlaskTestCase):
                              {'error': 'Source %s has an unknown sourcer' % self.TEST_UNKNOWN_SOURCER},
                              'Wrong error message')
 
-    def test_sourcer_feedparser(self):
+    def test_source(self):
         response = self.client.get('/source/%s/articles' % self.TEST_SOURCE,
                                    headers=self.get_api_headers())
         self.assertResponseCode(response, 200)
@@ -79,3 +79,25 @@ class FlaskArticlesTestCase(unittest.TestCase, FlaskTestCase):
             self.assertIn('url',
                           article,
                           'Article has no url')
+
+    def test_source_limit(self):
+        for limit in range(0, 10):
+            response = self.client.get('/source/%s/articles/%d' % (self.TEST_SOURCE, limit),
+                                       headers=self.get_api_headers())
+            self.assertResponseCode(response, 200)
+
+            article_count = 0
+            for article in self.__get_articles(response):
+                self.assertEqual(article['source'],
+                                 self.TEST_SOURCE,
+                                 'Returned article has wrong source')
+                self.assertIn('id',
+                              article,
+                              'Article has no id')
+                self.assertIn('url',
+                              article,
+                              'Article has no url')
+
+                article_count += 1
+
+                self.assertLessEqual(article_count, limit, 'Wrong count returned')
