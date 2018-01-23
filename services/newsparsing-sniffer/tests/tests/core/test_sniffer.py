@@ -19,7 +19,7 @@ def setUpModule():
 def tearDownModule():
     coreTearDownModule()
 
-        
+
 class SnifferTestCase(unittest.TestCase, CoreSnifferTestCase):
 
     TEST_UNKNOWN_SOURCE = 'unknown-source'
@@ -73,7 +73,7 @@ class SnifferTestCase(unittest.TestCase, CoreSnifferTestCase):
                          'Source %s has an unknown sourcer' % self.TEST_UNKNOWN_SOURCER,
                          'Wrong error raised')
 
-    def test_sniff(self):
+    def test_sniff_yield(self):
         # Create iterator
         articles_iterator = self.articles_sniffer.ask({'source': self.TEST_SOURCE})
         # Sniff RSS
@@ -81,3 +81,13 @@ class SnifferTestCase(unittest.TestCase, CoreSnifferTestCase):
             self.assertIn('id', article, 'Article has no id')
             for field in get_source_fields(self.TEST_SOURCE):
                 self.assertIn(field, article['content'], 'Missing field %s in article' % field)
+
+    def test_sniff_store(self):
+        # Create iterator
+        articles_iterator = self.articles_sniffer.ask({'source': self.TEST_SOURCE,
+                                                       'store': True})
+        # Sniff RSS
+        for article in articles_iterator:
+            self.assertIn('id', article, 'Article has no id')
+            self.assertIn('version', article, 'Article has no version')
+            self.assertEqual(article['version'], 0, 'Wrong version returned')
