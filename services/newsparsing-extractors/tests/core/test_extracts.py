@@ -5,12 +5,12 @@ Created on 16 janv. 2018
 '''
 import unittest
 
-from core.newsparsing.extractors.config.application import get_extractors_fields
-from core.newsparsing.extractors.constants.extractors import NEWSPAPER3K
-from core.newsparsing.extractors.errors import MissingMessageKeyException, \
+from core import ExtractorsTestCase
+from newsparsing.extractors.core.config.application import get_extractors_fields
+from newsparsing.extractors.core.constants.extractors import NEWSPAPER3K
+from newsparsing.extractors.core.errors import MissingMessageKeyException, \
     UnknownExtractorException
-from core.newsparsing.extractors.extracts import ExtracterActor
-from tests.core import ExtractorsTestCase
+from newsparsing.extractors.core.extracts import ExtracterActor
 
 
 class CoreExtractsTestCase(unittest.TestCase, ExtractorsTestCase):

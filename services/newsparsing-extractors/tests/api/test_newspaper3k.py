@@ -7,9 +7,9 @@ import unittest
 
 from flask import json
 
-from core.newsparsing.extractors.config.application import get_extractors_fields
-from core.newsparsing.extractors.constants.extractors import NEWSPAPER3K
-from tests.api import FlaskTestCase
+from api import FlaskTestCase
+from newsparsing.extractors.core.config.application import get_extractors_fields
+from newsparsing.extractors.core.constants.extractors import NEWSPAPER3K
 
 
 class FlaskNewspaper3kTestCase(unittest.TestCase, FlaskTestCase):

@@ -6,8 +6,7 @@ Created on 6 janv. 2018
 from flask.blueprints import Blueprint
 from flask.globals import request
 from flask.json import jsonify
-
-from core.newsparsing.extractors.extracts import ExtracterActor
+from newsparsing.extractors.core.extracts import ExtracterActor
 
 extractor_blueprint = Blueprint('extractor', __name__)
 

@@ -5,11 +5,11 @@ Created on 11 janv. 2018
 '''
 import pykka
 
-from core.newsparsing.extractors.config.application import get_extractors
-from core.newsparsing.extractors.constants.extractors import NEWSPAPER3K
-from core.newsparsing.extractors.errors import MissingMessageKeyException, \
+from newsparsing.extractors.core.config.application import get_extractors
+from newsparsing.extractors.core.constants.extractors import NEWSPAPER3K
+from newsparsing.extractors.core.errors import MissingMessageKeyException, \
     UnknownExtractorException
-from core.newsparsing.extractors.extractors.newspaper3k import Newspaper3kActor
+from newsparsing.extractors.core.extractors.newspaper3k import Newspaper3kActor
 
 
 class ExtracterActor(pykka.ThreadingActor):

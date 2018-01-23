@@ -1,12 +1,11 @@
 from itertools import permutations
 import os
-
-from core.newsparsing.extractors.config.application import load_configuration
-from tests import CONFIG_DIR
+from newsparsing.extractors.core.config.application import load_configuration
 
 
 class ExtractorsTestCase():
 
+    CONFIG_DIR = os.path.join(os.path.dirname(__file__), "../../conf")
     APPLICATION_CONFIGURATION = os.path.join(CONFIG_DIR,
                                              "tests.application.conf")
 

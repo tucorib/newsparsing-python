@@ -8,9 +8,9 @@ import logging
 from newspaper.article import Article as NewspaperArticle
 import pykka
 
-from core.newsparsing.extractors.config.application import get_extractors_fields
-from core.newsparsing.extractors.constants.extractors import NEWSPAPER3K
-from core.newsparsing.extractors.errors import MissingMessageKeyException
+from newsparsing.extractors.core.config.application import get_extractors_fields
+from newsparsing.extractors.core.constants.extractors import NEWSPAPER3K
+from newsparsing.extractors.core.errors import MissingMessageKeyException
 
 logger = logging.getLogger('newsparsing.extractors')
 

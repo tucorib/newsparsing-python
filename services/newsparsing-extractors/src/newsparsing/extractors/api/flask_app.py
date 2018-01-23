@@ -6,7 +6,7 @@ Created on 5 janv. 2018
 import logging.config
 
 from flask import Flask
-from api.newsparsing.extractors.ressources.extract import extractor_blueprint
+from newsparsing.extractors.api.ressources.extract import extractor_blueprint
 
 
 def create_flask_app():
