@@ -7,10 +7,10 @@ import datetime
 import time
 import unittest
 
-from core.newsparsing.articles.dao.article_deleter import ArticleDeleterActor
-from core.newsparsing.articles.dao.article_getter import ArticleGetterActor
-from core.newsparsing.articles.dao.article_storer import ArticleStorerActor
-from tests.core import ArticlesTestCase
+from core import ArticlesTestCase
+from newsparsing.articles.core.dao.article_deleter import ArticleDeleterActor
+from newsparsing.articles.core.dao.article_getter import ArticleGetterActor
+from newsparsing.articles.core.dao.article_storer import ArticleStorerActor
 
 
 class TestArticles(unittest.TestCase, ArticlesTestCase):

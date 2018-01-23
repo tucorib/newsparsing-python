@@ -7,9 +7,9 @@ import unittest
 
 from pymongo.errors import ServerSelectionTimeoutError
 from pymongo.mongo_client import MongoClient
-
-from core.newsparsing.articles.config.application import get_storage_database_name, get_storage_database_url
-from tests.core import ArticlesTestCase
+from core import ArticlesTestCase
+from newsparsing.articles.core.config.application import get_storage_database_url, \
+    get_storage_database_name
 
 
 class TestStorage(unittest.TestCase, ArticlesTestCase):

@@ -5,7 +5,7 @@ Created on 11 janv. 2018
 '''
 import pykka
 from pymongo.mongo_client import MongoClient
-from core.newsparsing.articles.config.application import get_storage_database_url, \
+from newsparsing.articles.core.config.application import get_storage_database_url, \
     get_storage_database_name
 
 

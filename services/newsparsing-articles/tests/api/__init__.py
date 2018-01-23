@@ -1,14 +1,13 @@
 import datetime
 import os
-
-from api.newsparsing.articles.flask_app import create_flask_app, \
+from core import ArticlesTestCase
+from newsparsing.articles.api.flask_app import create_flask_app, \
     load_flask_configuration
-from tests import CONFIG_DIR
-from tests.core import ArticlesTestCase
 
 
 class FlaskTestCase(ArticlesTestCase):
 
+    CONFIG_DIR = os.path.join(os.path.dirname(__file__), "../../conf")
     FLASK_CONFIGURATION_FILE = os.path.join(CONFIG_DIR, "tests.flask.conf")
 
     def setUp(self):

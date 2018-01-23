@@ -7,9 +7,9 @@ from flask.blueprints import Blueprint
 from flask.globals import request
 from flask_jsonpify import jsonify
 
-from core.newsparsing.articles.dao.article_deleter import ArticleDeleterActor
-from core.newsparsing.articles.dao.article_getter import ArticleGetterActor
-from core.newsparsing.articles.dao.article_storer import ArticleStorerActor
+from newsparsing.articles.core.dao.article_deleter import ArticleDeleterActor
+from newsparsing.articles.core.dao.article_getter import ArticleGetterActor
+from newsparsing.articles.core.dao.article_storer import ArticleStorerActor
 
 article_blueprint = Blueprint('article', __name__)
 
@@ -77,7 +77,7 @@ def article_id(article_id):
                          methods=['GET'])
 def article_id_version(article_id, version):
     # Start actor
-    article_getter_actor = ArticleGetterActor.start()
+    article_getter_actor = ArticleGetterActor().start()
     article = article_getter_actor.ask({'id': article_id,
                                         'version': version})
     # Stop actor

@@ -6,10 +6,9 @@ Created on 11 janv. 2018
 from dictdiffer import diff
 import pykka
 from pymongo.mongo_client import MongoClient
-
-from core.newsparsing.articles.config.application import get_storage_database_url, \
+from newsparsing.articles.core.config.application import get_storage_database_url, \
     get_storage_database_name
-from core.newsparsing.articles.dao.article_getter import ArticleGetterActor
+from newsparsing.articles.core.dao.article_getter import ArticleGetterActor
 
 
 class ArticleStorerActor(pykka.ThreadingActor):

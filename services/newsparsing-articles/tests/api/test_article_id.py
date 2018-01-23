@@ -7,8 +7,7 @@ import datetime
 import unittest
 
 from flask import json
-
-from tests.api import ArticleTestCase
+from api import ArticleTestCase
 
 
 class TestArticleId(unittest.TestCase, ArticleTestCase):

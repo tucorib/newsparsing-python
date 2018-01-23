@@ -8,7 +8,7 @@ import json
 import time
 import unittest
 
-from tests.api import ArticleTestCase
+from api import ArticleTestCase
 
 
 class TestArticle(unittest.TestCase, ArticleTestCase):
