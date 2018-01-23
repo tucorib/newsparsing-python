@@ -21,6 +21,7 @@ class ArticlesActor(pykka.ThreadingActor):
             raise MissingMessageKeyException('source')
 
         source = message['source']
+        limit = message.get('limit', None)
 
         # Check source
         if source not in get_sources():
@@ -38,7 +39,8 @@ class ArticlesActor(pykka.ThreadingActor):
             # Start actor
             parser_actor = FeedparserActor.start(self)
             try:
-                for article in parser_actor.ask({'source': source}):
+                for article in parser_actor.ask({'source': source,
+                                                 'limit': limit}):
                     yield article
             finally:
                 # Stop actor

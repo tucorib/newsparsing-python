@@ -91,3 +91,19 @@ class SnifferTestCase(unittest.TestCase, CoreSnifferTestCase):
             self.assertIn('id', article, 'Article has no id')
             self.assertIn('version', article, 'Article has no version')
             self.assertEqual(article['version'], 0, 'Wrong version returned')
+
+    def test_sniff_yield_limit(self):
+        for limit in range(0, 10):
+            # Create iterator
+            articles_iterator = self.articles_sniffer.ask({'source': self.TEST_SOURCE,
+                                                           'limit': limit})
+            # Sniff RSS
+            article_count = 0
+            for article in articles_iterator:
+                self.assertIn('id', article, 'Article has no id')
+                for field in get_source_fields(self.TEST_SOURCE):
+                    self.assertIn(field, article['content'], 'Missing field %s in article' % field)
+
+                article_count += 1
+
+                self.assertLessEqual(article_count, limit, 'Wrong count returned')

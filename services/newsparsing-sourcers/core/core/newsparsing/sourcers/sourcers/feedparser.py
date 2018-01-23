@@ -26,6 +26,7 @@ class FeedparserActor(pykka.ThreadingActor):
             raise MissingMessageKeyException('source')
 
         source = message['source']
+        limit = message.get('limit', None)
 
         # Check source
         if source not in get_sources():
@@ -42,7 +43,10 @@ class FeedparserActor(pykka.ThreadingActor):
         logger.debug('feedparser.parse %s' % url)
         rss_parsing = feedparser.parse(url)
         # Parse articles
-        for rss_item in rss_parsing.entries:
+        entries = rss_parsing.entries
+        if limit is not None:
+            entries = entries[0:limit]
+        for rss_item in entries:
             # Get article url
             article_url = rss_item.get('link', None)
 

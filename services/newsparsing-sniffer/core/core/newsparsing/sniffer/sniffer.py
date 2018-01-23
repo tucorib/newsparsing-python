@@ -92,12 +92,18 @@ class ArticlesSourcerActor(pykka.ThreadingActor):
 
         # Get params
         source = message['source']
+        limit = message.get('limit', None)
 
         # Get articles from source
-        logger.debug('Source articles from %s' % source)
-        source_request = requests.get('%s/source/%s/articles' % (get_service_sourcers(),
-                                                                 source))
-
+        if limit is not None:
+            logger.debug('Source articles from %s [limit = %d]' % (source, limit))
+            source_request = requests.get('%s/source/%s/articles/%d' % (get_service_sourcers(),
+                                                                        source,
+                                                                        limit))
+        else:
+            logger.debug('Source articles from %s' % source)
+            source_request = requests.get('%s/source/%s/articles' % (get_service_sourcers(),
+                                                                     source))
         # Handle error
         if source_request.status_code == 404:
             raise Exception('Service sourcers unavailable')

@@ -20,11 +20,12 @@ flask_app = Flask(__name__)
 
 
 def stream_iterator(iterator):
-    # Get first element
-    first = next(iterator)
-    if first is None:
+    try:
+        # Get first element
+        first = next(iterator)
+    except StopIteration:
         # Empty queue, return empty JSON
-        return Response(json.dumps({}),
+        return Response(json.dumps([]),
                         mimetype="application/json")
 
     def stream(iterator):
@@ -54,6 +55,26 @@ def articles(source):
              'id': 'article id',
              'url': 'article url'
              }
+        ]))
+
+
+@flask_app.route('/source/<source>/articles/<int:limit>',
+                 methods=['GET'])
+def articles_limit(source, limit):
+    if source == TEST_UNKNOWN_SOURCE:
+        return jsonify({'error': 'Unknown source %s' % source}), 500
+    if source == TEST_NO_SOURCER:
+        return jsonify({'error': 'Source %s has no sourcer' % source}), 500
+    if source == TEST_NO_URL:
+        return jsonify({'error': 'Source %s has no url' % source}), 500
+    if source == TEST_UNKNOWN_SOURCER:
+        return jsonify({'error': 'Source %s has an unknown sourcer' % source}), 500
+    if source == TEST_SOURCE:
+        return stream_iterator(iter([
+            {'source': TEST_SOURCE,
+             'id': 'article id %d' % _,
+             'url': 'article url'
+             } for _ in range(0, limit)
         ]))
 
 

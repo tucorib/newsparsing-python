@@ -66,7 +66,7 @@ class CoreArticlesTestCase(unittest.TestCase, SourcersTestCase):
                          'Source %s has an unknown sourcer' % self.TEST_UNKNOWN_SOURCER,
                          'Wrong error raised')
 
-    def test_sourcer_feedparser(self):
+    def test_source(self):
         articles_result = self.articles_actor.ask({'source': self.TEST_SOURCE})
         self.assertIsInstance(articles_result,
                               Iterator,
@@ -81,3 +81,26 @@ class CoreArticlesTestCase(unittest.TestCase, SourcersTestCase):
             self.assertIn('url',
                           article,
                           'Article has no url')
+
+    def test_source_limit(self):
+        for limit in range(0, 10):
+            articles_result = self.articles_actor.ask({'source': self.TEST_SOURCE,
+                                                       'limit': limit})
+            self.assertIsInstance(articles_result,
+                                  Iterator,
+                                  'Iterator expected')
+            article_count = 0
+            for article in articles_result:
+                self.assertEqual(article['source'],
+                                 self.TEST_SOURCE,
+                                 'Returned article has wrong source')
+                self.assertIn('id',
+                              article,
+                              'Article has no id')
+                self.assertIn('url',
+                              article,
+                              'Article has no url')
+
+                article_count += 1
+
+                self.assertLessEqual(article_count, limit, 'Wrong count returned')
